@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Logo from "../../components/Logo";
 import Auth_Cover from "./Auth_Cover";
 
@@ -68,9 +69,12 @@ const LoginPage = () => {
 
           <div className="mt-[110px] poppins-regular text-[#9E9DA8] text-[18px] text-center">
             Don’t have an account yet?{" "}
-            <strong className="text-[#0071DC] cursor-pointer hover:underline">
+            <Link
+              to={"/register"}
+              className="text-[#0071DC] poppins-semibold cursor-pointer hover:underline"
+            >
               Sign Up
-            </strong>
+            </Link>
           </div>
         </div>
       </div>

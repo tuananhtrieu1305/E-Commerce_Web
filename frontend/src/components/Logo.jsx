@@ -5,7 +5,7 @@ const Logo = () => {
       <figure className="max-w-[32px]">
         <img srcSet={`${Logo_Icon} 2x`} alt="logo" />
       </figure>
-      <span className="poppins-bold leading-[32px]">ShopBi</span>
+      <span className="poppins-bold leading-[32px] text-[18px]">ShopBi</span>
     </div>
   );
 };
