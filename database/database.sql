@@ -25,14 +25,14 @@ DROP TABLE IF EXISTS `accounts`;
 CREATE TABLE `accounts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `role` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'USER',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `accounts` (
 
 LOCK TABLES `accounts` WRITE;
 /*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES (1,'admin1','adminpass','admin1@example.com','ADMIN','2025-08-25 07:50:52',NULL),(2,'user1','userpass1','user1@example.com','USER','2025-08-25 07:50:52',NULL),(3,'user2','userpass2','user2@example.com','USER','2025-08-25 07:50:52',NULL),(4,'user3','userpass3','user3@example.com','USER','2025-08-25 07:50:52',NULL);
+INSERT INTO `accounts` VALUES (1,'admin1','adminpass','admin1@example.com','ADMIN','2025-08-25 07:50:52',NULL),(2,'user1','userpass1','user1@example.com','USER','2025-08-25 07:50:52',NULL),(3,'user2','userpass2','user2@example.com','USER','2025-08-25 07:50:52',NULL),(4,'Update User3','userpass3','user3@example.com','USER','2025-08-25 07:50:52','2025-09-10 23:38:11'),(6,'johndoe','123456','john@example.com','USER','2025-09-11 00:02:57','2025-09-11 00:02:57'),(7,'johndoe222','123456','john222@example.com','USER','2025-09-11 00:06:53','2025-09-11 00:06:53');
 /*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -300,7 +300,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   KEY `account_id` (`account_id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,7 +309,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,2,'Trần Văn A','TP. Hồ Chí Minh, Việt Nam',NULL),(2,3,'Lê Thị B','Đà Nẵng, Việt Nam',NULL),(3,4,'Phạm Văn C','Hải Phòng, Việt Nam',NULL);
+INSERT INTO `users` VALUES (1,2,'Trần Văn A','TP. Hồ Chí Minh, Việt Nam',NULL),(2,3,'Lê Thị B','Đà Nẵng, Việt Nam',NULL),(3,4,'Update user 33333','Thanh Hóa, Việt Nam',NULL),(4,7,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -322,4 +322,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-31  7:41:48
+-- Dump completed on 2025-09-11  7:51:19
