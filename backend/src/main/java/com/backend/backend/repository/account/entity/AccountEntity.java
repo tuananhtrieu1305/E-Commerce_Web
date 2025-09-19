@@ -1,11 +1,15 @@
-package com.backend.backend.repository.entity;
+package com.backend.backend.repository.account.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "accounts")
+@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +32,9 @@ public class AccountEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
+
+    @Column(nullable = false, name = "deleted")
+    private Boolean deleted = false;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private AdminEntity admin;
@@ -105,5 +112,13 @@ public class AccountEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

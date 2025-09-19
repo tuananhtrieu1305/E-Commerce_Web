@@ -1,4 +1,4 @@
-package com.backend.backend.builder;
+package com.backend.backend.builder.account;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -14,6 +14,8 @@ public class AccountSearchBuilder {
     private LocalDateTime updated_at;
     private String fullname;
     private String address;
+    private String startTime;
+    private String endTime;
 
     private AccountSearchBuilder(Builder builder) {
         this.id = builder.id;
@@ -24,6 +26,8 @@ public class AccountSearchBuilder {
         this.updated_at = builder.updated_at;
         this.fullname = builder.fullname;
         this.address = builder.address;
+        this.startTime = builder.startTime;
+        this.endTime = builder.endTime;
     }
 
     public Integer getId() {
@@ -50,6 +54,12 @@ public class AccountSearchBuilder {
     public String getAddress() {
         return address;
     }
+    public String getStartTime() {
+        return startTime;
+    }
+    public String getEndTime() {
+        return endTime;
+    }
 
     public static class Builder {
         private Integer id;
@@ -61,6 +71,8 @@ public class AccountSearchBuilder {
         private LocalDateTime updated_at;
         private String fullname;
         private String address;
+        private String startTime;
+        private String endTime;
 
         public Builder setId(Integer id) {
             this.id = id;
@@ -92,6 +104,14 @@ public class AccountSearchBuilder {
         }
         public Builder setAddress(String address) {
             this.address = address;
+            return this;
+        }
+        public Builder setStartTime(String startTime) {
+            this.startTime = startTime;
+            return this;
+        }
+        public Builder setEndTime(String endTime) {
+            this.endTime = endTime;
             return this;
         }
         public AccountSearchBuilder build() {

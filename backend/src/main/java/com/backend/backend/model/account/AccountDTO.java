@@ -1,4 +1,4 @@
-package com.backend.backend.model;
+package com.backend.backend.model.account;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

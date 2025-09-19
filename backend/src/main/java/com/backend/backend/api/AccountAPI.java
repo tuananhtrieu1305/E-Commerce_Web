@@ -1,11 +1,10 @@
 package com.backend.backend.api;
 
-import com.backend.backend.model.AccountDTO;
-import com.backend.backend.service.AccountService;
+import com.backend.backend.model.account.AccountDTO;
+import com.backend.backend.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,12 @@ public class AccountAPI {
     public AccountDTO createAccount(@RequestBody Map<String, Object> body) {
         return accountService.createAccount(body);
     }
+
+    @PostMapping("/api/accounts/batch")
+    public List<AccountDTO> createListAccounts(@RequestBody List<Map<String, Object>> bodyList) {
+        return accountService.createListAccounts(bodyList);
+    }
+
 
     @PutMapping(value = "/api/account/{id}")
     public void updateAccount(@PathVariable Integer id, @RequestBody Map<String, Object> body) {

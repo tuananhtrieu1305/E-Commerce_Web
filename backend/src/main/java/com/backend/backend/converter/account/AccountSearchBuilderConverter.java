@@ -1,6 +1,6 @@
-package com.backend.backend.converter;
+package com.backend.backend.converter.account;
 
-import com.backend.backend.builder.AccountSearchBuilder;
+import com.backend.backend.builder.account.AccountSearchBuilder;
 import com.backend.backend.utils.MapUtil;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +19,8 @@ public class AccountSearchBuilderConverter {
                 .setUpdated_at(MapUtil.getObject(params, "updated_at", LocalDateTime.class))
                 .setFullname(MapUtil.getObject(params, "fullname", String.class))
                 .setAddress(MapUtil.getObject(params, "address", String.class))
+                .setStartTime(MapUtil.getObject(params, "startTime", String.class))
+                .setEndTime(MapUtil.getObject(params, "endTime", String.class))
                 .build();
     }
 }

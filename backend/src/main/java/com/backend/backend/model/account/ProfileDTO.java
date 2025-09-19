@@ -1,4 +1,4 @@
-package com.backend.backend.model;
+package com.backend.backend.model.account;
 
 public class ProfileDTO {
     private Integer id;

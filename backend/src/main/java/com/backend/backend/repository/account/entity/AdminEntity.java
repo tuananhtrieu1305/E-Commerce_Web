@@ -1,10 +1,10 @@
-package com.backend.backend.repository.entity;
+package com.backend.backend.repository.account.entity;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class UserEntity {
+@Table(name = "admins")
+public class AdminEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,7 +22,7 @@ public class UserEntity {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "image")
-    private byte[] image;
+    private String image;
 
     public Integer getId() {
         return id;
@@ -56,11 +56,11 @@ public class UserEntity {
         this.address = address;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

@@ -1,10 +1,10 @@
-package com.backend.backend.converter;
-import com.backend.backend.model.AccountDTO;
-import com.backend.backend.model.ProfileDTO;
-import com.backend.backend.repository.AccountRepository;
-import com.backend.backend.repository.entity.AccountEntity;
-import com.backend.backend.repository.entity.AdminEntity;
-import com.backend.backend.repository.entity.UserEntity;
+package com.backend.backend.converter.account;
+import com.backend.backend.model.account.AccountDTO;
+import com.backend.backend.model.account.ProfileDTO;
+import com.backend.backend.repository.account.AccountRepository;
+import com.backend.backend.repository.account.entity.AccountEntity;
+import com.backend.backend.repository.account.entity.AdminEntity;
+import com.backend.backend.repository.account.entity.UserEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
