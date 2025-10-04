@@ -1,6 +1,6 @@
 import { DeleteTwoTone } from "@ant-design/icons";
 import { message, Popconfirm } from "antd";
-import { deleteAccount } from "../../../services/Api";
+import { deleteAccount } from "../../../services/AccountAPI";
 
 const PopDeleteAccount = (props) => {
   const { accountDataDetail, refreshTable } = props;

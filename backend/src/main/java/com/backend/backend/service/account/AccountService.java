@@ -1,5 +1,6 @@
 package com.backend.backend.service.account;
 
+import com.backend.backend.model.account.UserListDTO;
 import com.backend.backend.model.account.AccountDTO;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface AccountService {
     AccountDTO createAccount(Map<String, Object> body);
     void deleteAccount(Integer id);
     List<AccountDTO> createListAccounts(List<Map<String, Object>> bodyList);
+    List<UserListDTO> getUserList();
 }

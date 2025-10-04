@@ -19,8 +19,6 @@ public class AdminEntity {
     @Column(name = "address")
     private String address;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
     @Column(name = "image")
     private String image;
 

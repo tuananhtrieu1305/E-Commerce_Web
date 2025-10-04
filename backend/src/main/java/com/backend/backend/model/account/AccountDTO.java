@@ -17,6 +17,9 @@ public class AccountDTO {
 
     private ProfileDTO profile;
 
+    private Integer orderCount;
+    private Integer totalOrderPrice;
+
     public Integer getId() {
         return id;
     }
@@ -71,5 +74,21 @@ public class AccountDTO {
 
     public void setProfile(ProfileDTO profile) {
         this.profile = profile;
+    }
+
+    public Integer getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(Integer orderCount) {
+        this.orderCount = orderCount;
+    }
+
+    public Integer getTotalOrderPrice() {
+        return totalOrderPrice;
+    }
+
+    public void setTotalOrderPrice(Integer totalOrderPrice) {
+        this.totalOrderPrice = totalOrderPrice;
     }
 }

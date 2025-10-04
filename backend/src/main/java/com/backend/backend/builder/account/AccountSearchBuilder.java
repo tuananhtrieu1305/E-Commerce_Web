@@ -11,6 +11,7 @@ public class AccountSearchBuilder {
     private String role;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created_at;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updated_at;
     private String fullname;
     private String address;
@@ -68,6 +69,7 @@ public class AccountSearchBuilder {
         private String role;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime created_at;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime updated_at;
         private String fullname;
         private String address;

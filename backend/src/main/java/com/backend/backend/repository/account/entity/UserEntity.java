@@ -1,6 +1,9 @@
 package com.backend.backend.repository.account.entity;
 
+import com.backend.backend.repository.order.entity.OrderEntity;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -19,10 +22,11 @@ public class UserEntity {
     @Column(name = "address")
     private String address;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
     @Column(name = "image")
     private String image;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrderEntity> orders;
 
     public Integer getId() {
         return id;
@@ -62,5 +66,13 @@ public class UserEntity {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public List<OrderEntity> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderEntity> order) {
+        this.orders = order;
     }
 }

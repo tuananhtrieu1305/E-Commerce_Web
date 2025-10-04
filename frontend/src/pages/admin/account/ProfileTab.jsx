@@ -1,7 +1,8 @@
-import { Badge, Descriptions, Tag } from "antd";
+import { Descriptions, Tag } from "antd";
 
 const ProfileTab = (props) => {
   const { accountDataDetail } = props;
+  console.log(accountDataDetail);
 
   const items = [
     {
@@ -36,7 +37,7 @@ const ProfileTab = (props) => {
       key: "6",
       label: "Updated At",
       children: accountDataDetail?.updated_at
-        ? accountDataDetail.created_at
+        ? accountDataDetail.updated_at
         : "No Data",
       span: 2,
     },

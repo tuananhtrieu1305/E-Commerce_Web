@@ -92,6 +92,9 @@ public class AccountRepositoryImpl implements AccountRepositoryCustom
         List<Object[]> results = query.getResultList();
         List<AccountDTO> accounts = new ArrayList<>();
 
+        List<Integer> userIds = new ArrayList<>();
+        Map<Integer, AccountDTO> accountMap = new HashMap<>();
+
         for (Object[] row : results) {
             AccountDTO dto = new AccountDTO();
             dto.setId((Integer) row[0]);
@@ -111,6 +114,43 @@ public class AccountRepositoryImpl implements AccountRepositoryCustom
 
             dto.setProfile(profile);
             accounts.add(dto);
+
+            if ("USER".equals(dto.getRole())) {
+                userIds.add(profile.getId());
+                accountMap.put(profile.getId(), dto);
+            }
+        }
+
+        if (!userIds.isEmpty()) {
+            String ordersQuery = "SELECT o.user_id, COUNT(o.id), SUM(o.total_cost) " +
+                    "FROM orders o " +
+                    "WHERE o.user_id IN :userIds " +
+                    "GROUP BY o.user_id";
+
+            Query ordersQueryObj = entityManager.createNativeQuery(ordersQuery);
+            ordersQueryObj.setParameter("userIds", userIds);
+            List<Object[]> ordersResults = ordersQueryObj.getResultList();
+
+            for (Object[] row : ordersResults) {
+                Integer userId = (Integer) row[0];
+                Long orderCount = (Long) row[1];
+                Number totalAmount = (Number) row[2];
+
+                AccountDTO account = accountMap.get(userId);
+                if (account != null) {
+                    account.setOrderCount(orderCount != null ? orderCount.intValue() : 0);
+                    account.setTotalOrderPrice(totalAmount != null ? totalAmount.intValue() : 0);
+                }
+            }
+
+            for (AccountDTO account : accounts) {
+                if (account.getOrderCount() == null) {
+                    account.setOrderCount(0);
+                }
+                if (account.getTotalOrderPrice() == null) {
+                    account.setTotalOrderPrice(0);
+                }
+            }
         }
         return accounts;
     }

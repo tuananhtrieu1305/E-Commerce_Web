@@ -24,3 +24,8 @@ export const createListAccounts = (payload) => {
   const url = "/api/accounts/batch";
   return axios.post(url, payload);
 };
+
+export const getUserList = () => {
+  const url = "/api/account/user_list";
+  return axios.get(url);
+};

@@ -1,5 +1,11 @@
+import OrderTable from "./order/OrderTable";
+
 const ManageOrders = () => {
-  return <div>ManageOrders</div>;
+  return (
+    <>
+      <OrderTable />
+    </>
+  );
 };
 
 export default ManageOrders;

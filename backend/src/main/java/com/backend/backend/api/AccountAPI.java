@@ -1,6 +1,7 @@
 package com.backend.backend.api;
 
 import com.backend.backend.model.account.AccountDTO;
+import com.backend.backend.model.account.UserListDTO;
 import com.backend.backend.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +40,10 @@ public class AccountAPI {
     @DeleteMapping(value = "/api/account/{id}")
     public void deleteAccount(@PathVariable Integer id) {
         accountService.deleteAccount(id);
+    }
+
+    @GetMapping(value = "/api/account/user_list")
+    public List<UserListDTO> getUserList() {
+        return accountService.getUserList();
     }
 }

@@ -3,6 +3,7 @@ package com.backend.backend.service.account.impl;
 import com.backend.backend.builder.account.AccountSearchBuilder;
 import com.backend.backend.converter.account.AccountDTOConverter;
 import com.backend.backend.converter.account.AccountSearchBuilderConverter;
+import com.backend.backend.model.account.UserListDTO;
 import com.backend.backend.model.account.AccountDTO;
 import com.backend.backend.repository.account.AccountRepository;
 import com.backend.backend.repository.account.AdminRepository;
@@ -193,5 +194,20 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteAccount(Integer id) {
         accountRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public List<UserListDTO> getUserList() {
+        List<UserEntity> users = userRepository.findAll();
+        List<UserListDTO> res = new ArrayList<>();
+        for(UserEntity user : users) {
+            UserListDTO userListDTO = new UserListDTO();
+            userListDTO.setId(user.getId());
+            userListDTO.setName(user.getFullname());
+            userListDTO.setAddress(user.getAddress());
+            res.add(userListDTO);
+        }
+        return res;
     }
 }

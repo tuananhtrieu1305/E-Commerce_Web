@@ -2,7 +2,7 @@ import { EditTwoTone, PlusOutlined } from "@ant-design/icons";
 import { ProTable } from "@ant-design/pro-components";
 import { Button } from "antd";
 import { useRef, useState } from "react";
-import { getAccount } from "../../../services/Api";
+import { getAccount } from "../../../services/AccountAPI";
 import ModalViewDetailAccount from "./ModalViewDetailAccount";
 import ModalUpdateAccount from "./ModalUpdateAccount";
 import PopDeleteAccount from "./PopDeleteAccount";

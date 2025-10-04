@@ -3,7 +3,7 @@ import { Table, Upload, Button } from "antd";
 import { useState } from "react";
 import Exceljs from "exceljs";
 import { Buffer } from "buffer";
-import { createListAccounts } from "../../../services/Api";
+import { createListAccounts } from "../../../services/AccountAPI";
 
 const FormCreateManyAccounts = (props) => {
   const { setOpenAccountCreate, refreshTable, messageApi } = props;

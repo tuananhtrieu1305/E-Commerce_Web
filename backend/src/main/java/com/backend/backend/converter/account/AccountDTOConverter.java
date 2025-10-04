@@ -29,6 +29,8 @@ public class AccountDTOConverter {
             }
         }
         accountDTO.setProfile(profileDTO);
+        accountDTO.setOrderCount(0);
+        accountDTO.setTotalOrderPrice(0);
         return accountDTO;
     }
 }
