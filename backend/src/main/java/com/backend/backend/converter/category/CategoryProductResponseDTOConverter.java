@@ -2,7 +2,7 @@ package com.backend.backend.converter.category;
 
 import com.backend.backend.model.category.CategoryProductResponseDTO;
 import com.backend.backend.model.category.ProductSummaryDTO;
-import com.backend.backend.repository.product.entity.CategoryEntity;
+import com.backend.backend.repository.category.entity.CategoryEntity;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import org.springframework.stereotype.Component;
 

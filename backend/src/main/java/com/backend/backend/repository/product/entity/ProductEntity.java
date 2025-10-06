@@ -1,9 +1,11 @@
 package com.backend.backend.repository.product.entity;
 
+import com.backend.backend.repository.category.entity.CategoryEntity;
 import com.backend.backend.repository.order.entity.OrderItemEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,6 +40,9 @@ public class ProductEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
+
+    @Column(nullable = false, name = "deleted")
+    private Boolean deleted = false;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductImageEntity> images;
@@ -123,6 +128,19 @@ public class ProductEntity {
 
     public void setImages(List<ProductImageEntity> images) {
         this.images = images;
+        if (images != null) {
+            for (ProductImageEntity image : images) {
+                image.setProduct(this);
+            }
+        }
+    }
+
+    public void addImage(ProductImageEntity image) {
+        if (this.images == null) {
+            this.images = new ArrayList<>();
+        }
+        this.images.add(image);
+        image.setProduct(this);
     }
 
     public List<OrderItemEntity> getOrderItems() {
@@ -131,5 +149,13 @@ public class ProductEntity {
 
     public void setOrderItems(List<OrderItemEntity> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

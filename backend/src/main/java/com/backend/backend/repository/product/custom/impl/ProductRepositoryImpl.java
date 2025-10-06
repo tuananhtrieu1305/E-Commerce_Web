@@ -100,7 +100,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     public List<ProductDTO> getProduct(ProductSearchBuilder productSearchBuilder) {
         StringBuilder sql = new StringBuilder();
         joinTable(productSearchBuilder, sql);
-        StringBuilder where = new StringBuilder("WHERE 1=1 ");
+        StringBuilder where = new StringBuilder("WHERE p.deleted = false ");
         query(productSearchBuilder, where);
         sql.append(where);
         sql.append(" ORDER BY p.created_at DESC, p.id ASC, pi.id ASC");

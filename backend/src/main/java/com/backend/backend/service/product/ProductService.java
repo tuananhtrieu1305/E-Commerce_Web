@@ -7,4 +7,5 @@ import java.util.Map;
 
 public interface ProductService {
     List<ProductDTO> getProduct(Map<String, Object> params);
+    ProductDTO createProduct(Map<String, Object> body);
 }

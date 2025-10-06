@@ -1,5 +1,7 @@
 package com.backend.backend.builder.product;
 
+import java.util.List;
+
 public class ProductSearchBuilder {
     private Integer id;
     private String title;
@@ -12,6 +14,9 @@ public class ProductSearchBuilder {
     private String endTime;
     private Integer minStock;
     private Integer maxStock;
+    private Integer price;
+    private Integer stock;
+    private List<String> images;
 
     private ProductSearchBuilder(ProductSearchBuilder.Builder builder) {
         this.id = builder.id;
@@ -25,6 +30,9 @@ public class ProductSearchBuilder {
         this.sellerName = builder.sellerName;
         this.minStock = builder.minStock;
         this.maxStock = builder.maxStock;
+        this.price = builder.price;
+        this.stock = builder.stock;
+        this.images = builder.images;
     }
 
     public Integer getId() {
@@ -71,6 +79,18 @@ public class ProductSearchBuilder {
         return maxStock;
     }
 
+    public Integer getPrice() {
+        return price;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
     public static class Builder {
         private Integer id;
         private String title;
@@ -83,6 +103,9 @@ public class ProductSearchBuilder {
         private String endTime;
         private Integer minStock;
         private Integer maxStock;
+        private Integer price;
+        private Integer stock;
+        private List<String> images;
 
         public Builder setId(Integer id) {
             this.id = id;
@@ -136,6 +159,21 @@ public class ProductSearchBuilder {
 
         public Builder setMaxStock(Integer maxStock) {
             this.maxStock = maxStock;
+            return this;
+        }
+
+        public Builder setPrice(Integer price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder setStock(Integer stock) {
+            this.stock = stock;
+            return this;
+        }
+
+        public Builder setImages(List<String> images) {
+            this.images = images;
             return this;
         }
 

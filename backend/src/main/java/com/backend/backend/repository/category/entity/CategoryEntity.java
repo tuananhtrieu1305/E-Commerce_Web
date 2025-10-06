@@ -1,5 +1,6 @@
-package com.backend.backend.repository.product.entity;
+package com.backend.backend.repository.category.entity;
 
+import com.backend.backend.repository.product.entity.ProductEntity;
 import jakarta.persistence.*;
 
 import java.util.List;
