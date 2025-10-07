@@ -1,5 +1,11 @@
+import ProductTable from "./product/ProductTable";
+
 const ManageProducts = () => {
-  return <div>ManageProducts</div>;
+  return (
+    <>
+      <ProductTable />
+    </>
+  );
 };
 
 export default ManageProducts;

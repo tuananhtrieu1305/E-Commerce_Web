@@ -2,19 +2,14 @@ import { useRef, useState } from "react";
 import { EditTwoTone, PlusOutlined } from "@ant-design/icons";
 import { ProTable } from "@ant-design/pro-components";
 import { Button } from "antd";
-import { getOrder } from "../../../services/OrderAPI";
 import formatVND from "../../../helpers/ConvertMoney";
-import ModalViewDetailOrder from "./ModalViewDetailOrder";
-import ModalUpdateOrder from "./ModalUpdateOrder";
-import PopDeleteOrder from "./PopDeleteOrder";
-import ModalCreateOrder from "./ModalCreateOrder";
+import { getProduct } from "../../../services/ProductAPI";
+import ModalViewDetailProduct from "./ModalViewDetailProduct";
 
-const OrderTable = () => {
+const ProductTable = () => {
   const actionRef = useRef();
-  const [openModalCreateOrder, setOpenModalCreateOrder] = useState(false);
   const [openModalViewDetail, setOpenModalViewDetail] = useState(false);
-  const [orderDataDetail, setOrderDataDetail] = useState([]);
-  const [openModalUpdateOrder, setOpenModalUpdateOrder] = useState(false);
+  const [productDataDetail, setProductDataDetail] = useState([]);
 
   const waitTimePromise = async (time = 20) => {
     return new Promise((resolve) => {
@@ -30,8 +25,8 @@ const OrderTable = () => {
 
   const columns = [
     {
-      title: "CUSTOMER",
-      dataIndex: "customer_name",
+      title: "TITLE",
+      dataIndex: "title",
       copyable: true,
       ellipsis: true,
       // eslint-disable-next-line no-unused-vars
@@ -41,40 +36,40 @@ const OrderTable = () => {
             href="#"
             onClick={() => {
               setOpenModalViewDetail(true);
-              setOrderDataDetail(entity);
+              setProductDataDetail(entity);
             }}
           >
-            {entity.customer_name}
+            {entity.title}
           </a>
         );
       },
     },
     {
-      title: "ADDRESS",
-      dataIndex: "address",
+      title: "CATEGORY",
+      dataIndex: ["category", "cate_name"],
       filters: true,
       onFilter: true,
       ellipsis: true,
     },
     {
-      title: "PHONE",
-      dataIndex: "phone",
+      title: "SELLER",
+      dataIndex: ["seller", "seller_name"],
       search: true,
       copyable: true,
     },
     {
-      title: "TOTAL COST",
-      dataIndex: "total_cost",
+      title: "PRICE",
+      dataIndex: "price",
       valueType: "money",
       hideInSearch: true,
       // eslint-disable-next-line no-unused-vars
       render(dom, entity, index, action, schema) {
-        return <span>{formatVND(entity.total_cost)}</span>;
+        return <span>{formatVND(entity.price)}</span>;
       },
     },
     {
-      title: "TOTAL COST",
-      dataIndex: "total_cost",
+      title: "PRICE",
+      dataIndex: "price",
       valueType: "digitRange",
       hideInTable: true,
       search: {
@@ -88,22 +83,25 @@ const OrderTable = () => {
     },
 
     {
-      title: "CREATED AT",
-      key: "showTime",
-      dataIndex: "created_at",
-      valueType: "date",
+      title: "STOCK",
+      dataIndex: "stock",
+      valueType: "money",
       hideInSearch: true,
+      // eslint-disable-next-line no-unused-vars
+      render(dom, entity, index, action, schema) {
+        return <span>{formatVND(entity.stock)}</span>;
+      },
     },
     {
-      title: "CREATED AT",
-      dataIndex: "created_at",
-      valueType: "dateRange",
+      title: "STOCK",
+      dataIndex: "stock",
+      valueType: "digitRange",
       hideInTable: true,
       search: {
         transform: (value) => {
           return {
-            startTime: value[0],
-            endTime: value[1],
+            minStock: value[0],
+            maxStock: value[1],
           };
         },
       },
@@ -124,14 +122,6 @@ const OrderTable = () => {
                 fontSize: "18px",
               }}
               className="hover:translate-y-[-5px] hover:top-[5px] transition-all"
-              onClick={() => {
-                setOpenModalUpdateOrder(true);
-                setOrderDataDetail(entity);
-              }}
-            />
-            <PopDeleteOrder
-              orderDataDetail={entity}
-              refreshTable={refreshTable}
             />
           </>
         );
@@ -151,29 +141,31 @@ const OrderTable = () => {
         // eslint-disable-next-line no-unused-vars
         request={async (params, sort, filter) => {
           let query = "?1=1";
-          if (params?.address) {
-            query += `&address=${params.address}`;
+
+          if (params?.title) {
+            query += `&title=${params.title}`;
           }
-          if (params?.phone) {
-            query += `&phone=${params.phone}`;
+          if (params?.cate_name) {
+            query += `&category_name=${params.cate_name}`;
           }
-          if (params?.customer_name) {
-            query += `&customer_name=${params.customer_name}`;
+          if (params?.seller_name) {
+            query += `&seller_name=${params.seller_name}`;
           }
-          if (params?.startTime) {
-            query += `&startTime=${params.startTime}`;
+          if (params?.minStock) {
+            query += `&min_stock=${params.minStock}`;
           }
-          if (params?.endTime) {
-            query += `&endTime=${params.endTime}`;
+          if (params?.maxStock) {
+            query += `&max_stock=${params.maxStock}`;
           }
           if (params?.minPrice) {
-            query += `&min_cost=${params.minPrice}`;
+            query += `&minPrice=${params.minPrice}`;
           }
           if (params?.maxPrice) {
-            query += `&max_cost=${params.maxPrice}`;
+            query += `&maxPrice=${params.maxPrice}`;
           }
 
-          const res = await getOrder(query);
+          const res = await getProduct(query);
+
           await waitTime(80);
           return {
             data: res,
@@ -184,45 +176,23 @@ const OrderTable = () => {
         }}
         rowKey="id"
         pagination={{
-          pageSize: 8,
+          pageSize: 6,
           onChange: (page) => console.log(page),
         }}
-        headerTitle="MANAGE ORDERS"
+        headerTitle="MANAGE PRODUCTS"
         toolBarRender={() => [
-          <Button
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-            onClick={() => {
-              setOpenModalCreateOrder(true);
-            }}
-          >
+          <Button key="button" icon={<PlusOutlined />} type="primary">
             Create
           </Button>,
         ]}
       />
-
-      <ModalViewDetailOrder
+      <ModalViewDetailProduct
         openModalViewDetail={openModalViewDetail}
         setOpenModalViewDetail={setOpenModalViewDetail}
-        orderDataDetail={orderDataDetail}
-      />
-
-      <ModalUpdateOrder
-        openModalUpdateOrder={openModalUpdateOrder}
-        setOpenModalUpdateOrder={setOpenModalUpdateOrder}
-        orderDataDetail={orderDataDetail}
-        setOrderDataDetail={setOrderDataDetail}
-        refreshTable={refreshTable}
-      />
-
-      <ModalCreateOrder
-        openModalCreateOrder={openModalCreateOrder}
-        setOpenModalCreateOrder={setOpenModalCreateOrder}
-        refreshTable={refreshTable}
+        productDataDetail={productDataDetail}
       />
     </>
   );
 };
 
-export default OrderTable;
+export default ProductTable;

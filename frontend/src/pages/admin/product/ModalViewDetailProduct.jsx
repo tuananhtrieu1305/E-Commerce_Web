@@ -1,8 +1,8 @@
-import { Modal, Tabs, Divider } from "antd";
-import OrderTab from "./OrderTab";
+import { Modal, Divider } from "antd";
+import ProductTab from "./ProductTab";
 
-const ModalViewDetailOrder = (props) => {
-  const { openModalViewDetail, orderDataDetail, setOpenModalViewDetail } =
+const ModalViewDetailProduct = (props) => {
+  const { openModalViewDetail, productDataDetail, setOpenModalViewDetail } =
     props;
 
   const handleOk = () => {
@@ -16,17 +16,16 @@ const ModalViewDetailOrder = (props) => {
     <>
       <Modal
         width={1000}
-        title={`${orderDataDetail?.customer_name}'s Order`}
+        title={`${productDataDetail?.title}'s Detail`}
         open={openModalViewDetail}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={false}
       >
         <Divider className="bg-gray-300" />
-        <OrderTab orderDataDetail={orderDataDetail} />
+        <ProductTab productDataDetail={productDataDetail} />
       </Modal>
     </>
   );
 };
-
-export default ModalViewDetailOrder;
+export default ModalViewDetailProduct;
