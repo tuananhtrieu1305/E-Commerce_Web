@@ -5,10 +5,12 @@ import { Button } from "antd";
 import formatVND from "../../../helpers/ConvertMoney";
 import { getProduct } from "../../../services/ProductAPI";
 import ModalViewDetailProduct from "./ModalViewDetailProduct";
+import ModalCreateProduct from "./ModalCreateProduct";
 
 const ProductTable = () => {
   const actionRef = useRef();
   const [openModalViewDetail, setOpenModalViewDetail] = useState(false);
+  const [openModalCreateProduct, setOpenModalCreateProduct] = useState(false);
   const [productDataDetail, setProductDataDetail] = useState([]);
 
   const waitTimePromise = async (time = 20) => {
@@ -181,7 +183,14 @@ const ProductTable = () => {
         }}
         headerTitle="MANAGE PRODUCTS"
         toolBarRender={() => [
-          <Button key="button" icon={<PlusOutlined />} type="primary">
+          <Button
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => {
+              setOpenModalCreateProduct(true);
+            }}
+          >
             Create
           </Button>,
         ]}
@@ -190,6 +199,11 @@ const ProductTable = () => {
         openModalViewDetail={openModalViewDetail}
         setOpenModalViewDetail={setOpenModalViewDetail}
         productDataDetail={productDataDetail}
+      />
+      <ModalCreateProduct
+        openModalCreateProduct={openModalCreateProduct}
+        setOpenModalCreateProduct={setOpenModalCreateProduct}
+        refreshTable={refreshTable}
       />
     </>
   );

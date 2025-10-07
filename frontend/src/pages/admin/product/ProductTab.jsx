@@ -1,4 +1,5 @@
 import { Descriptions } from "antd";
+import ImageProductTab from "./ImageProductTab";
 
 const ProductTab = (props) => {
   const { productDataDetail } = props;
@@ -54,6 +55,18 @@ const ProductTab = (props) => {
       key: "9",
       label: "Seller",
       children: productDataDetail?.seller?.seller_name,
+      span: 4,
+    },
+    {
+      key: "10",
+      label: "Images",
+      children:
+        productDataDetail?.imagePaths &&
+        productDataDetail.imagePaths.length > 0 ? (
+          <ImageProductTab productDataDetail={productDataDetail} />
+        ) : (
+          "No Data"
+        ),
     },
   ];
 
