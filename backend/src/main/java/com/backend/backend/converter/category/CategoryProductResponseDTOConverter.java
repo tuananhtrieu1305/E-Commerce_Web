@@ -6,6 +6,7 @@ import com.backend.backend.repository.category.entity.CategoryEntity;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +18,10 @@ public class CategoryProductResponseDTOConverter {
         responseDTO.setCategory_name(category.getCate_name());
 
         if (category.getProduct() != null && !category.getProduct().isEmpty()) {
-            List<ProductSummaryDTO> productSummaryDTOs = category.getProduct().stream()
-                    .map(this::toProductSummaryDTO)
-                    .collect(Collectors.toList());
+            List<ProductSummaryDTO> productSummaryDTOs = new ArrayList<>();
+            for (ProductEntity productEntity : category.getProduct()) {
+                productSummaryDTOs.add(toProductSummaryDTO(productEntity));
+            }
             responseDTO.setProducts(productSummaryDTOs);
         }
 
@@ -27,9 +29,11 @@ public class CategoryProductResponseDTOConverter {
     }
 
     public List<CategoryProductResponseDTO> toCategoryProductResponseDTOList(List<CategoryEntity> categories) {
-        return categories.stream()
-                .map(this::toCategoryProductResponseDTO)
-                .collect(Collectors.toList());
+        List<CategoryProductResponseDTO> dtoList = new ArrayList<>();
+        for (CategoryEntity category : categories) {
+            dtoList.add(toCategoryProductResponseDTO(category));
+        }
+        return dtoList;
     }
 
     private ProductSummaryDTO toProductSummaryDTO(ProductEntity product) {

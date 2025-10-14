@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,10 @@ public class ProductDTOConverter {
 
         // Convert product images
         if (product.getImages() != null && !product.getImages().isEmpty()) {
-            List<ProductImageDTO> productImageDTOs = product.getImages().stream()
-                    .map(this::convertToProductImageDTO)
-                    .collect(Collectors.toList());
+            List<ProductImageDTO> productImageDTOs = new ArrayList<>();
+            for (ProductImageEntity imageEntity : product.getImages()) {
+                productImageDTOs.add(convertToProductImageDTO(imageEntity));
+            }
             productDTO.setImagePaths(productImageDTOs);
         }
 

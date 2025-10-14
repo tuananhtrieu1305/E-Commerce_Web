@@ -9,12 +9,12 @@ const FormCreateOneAccount = (props) => {
     const { username, email, role, password } = values;
     const res = await createAccount({ username, email, role, password });
     console.log(res);
-    if (res?.id) {
+    if (res?.status === 200) {
       form.resetFields();
       setOpenAccountCreate(false);
       messageApi.open({
         type: "success",
-        content: "Account Created!",
+        content: res.message,
         duration: 2,
       });
       setTimeout(() => {
@@ -23,7 +23,7 @@ const FormCreateOneAccount = (props) => {
     } else {
       messageApi.open({
         type: "error",
-        content: "Account Created Failed!",
+        content: res.message,
       });
     }
   };

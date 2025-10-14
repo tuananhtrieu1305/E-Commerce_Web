@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface AccountService {
     List<AccountDTO> getAccount(Map<String, Object> params);
-    void updateAccount(Integer id, Map<String, Object> body);
+    AccountDTO updateAccount(Integer id, Map<String, Object> body);
     AccountDTO createAccount(Map<String, Object> body);
     void deleteAccount(Integer id);
     List<AccountDTO> createListAccounts(List<Map<String, Object>> bodyList);

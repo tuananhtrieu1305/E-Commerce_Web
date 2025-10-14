@@ -57,4 +57,13 @@ public class OrderDTOConverter {
 
         return orderItemDTO;
     }
+
+    public List<OrderDTO> toOrderDTOList(List<OrderEntity> entities) {
+        if (entities == null) {
+            return java.util.Collections.emptyList();
+        }
+        return entities.stream()
+                .map(this::toOrderDTO)
+                .collect(Collectors.toList());
+    }
 }

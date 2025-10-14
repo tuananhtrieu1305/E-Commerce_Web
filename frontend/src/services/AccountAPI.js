@@ -1,7 +1,7 @@
 import axios from "./Axios_Customize";
 
 export const getAccount = (query) => {
-  const url = `/api/account/${query}`;
+  const url = `/api/account${query}`;
   return axios.get(url);
 };
 
@@ -16,12 +16,12 @@ export const deleteAccount = (id) => {
 };
 
 export const createAccount = (payload) => {
-  const url = "/api/account/";
+  const url = "/api/account";
   return axios.post(url, payload);
 };
 
 export const createListAccounts = (payload) => {
-  const url = "/api/accounts/batch";
+  const url = "/api/account/batch";
   return axios.post(url, payload);
 };
 

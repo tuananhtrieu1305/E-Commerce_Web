@@ -144,7 +144,7 @@ const UserTable = () => {
           const res = await getAccount(query);
           await waitTime(80);
           return {
-            data: res,
+            data: res.data,
             page: 1,
             success: true,
             // "total": 30

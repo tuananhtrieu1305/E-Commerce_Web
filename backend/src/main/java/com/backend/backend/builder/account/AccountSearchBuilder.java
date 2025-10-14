@@ -17,6 +17,8 @@ public class AccountSearchBuilder {
     private String address;
     private String startTime;
     private String endTime;
+    private String password;
+    private String image;
 
     private AccountSearchBuilder(Builder builder) {
         this.id = builder.id;
@@ -29,6 +31,8 @@ public class AccountSearchBuilder {
         this.address = builder.address;
         this.startTime = builder.startTime;
         this.endTime = builder.endTime;
+        this.password = builder.password;
+        this.image = builder.image;
     }
 
     public Integer getId() {
@@ -62,6 +66,14 @@ public class AccountSearchBuilder {
         return endTime;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
     public static class Builder {
         private Integer id;
         private String username;
@@ -75,6 +87,8 @@ public class AccountSearchBuilder {
         private String address;
         private String startTime;
         private String endTime;
+        private String password;
+        private String image;
 
         public Builder setId(Integer id) {
             this.id = id;
@@ -116,6 +130,17 @@ public class AccountSearchBuilder {
             this.endTime = endTime;
             return this;
         }
+
+        public Builder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder setImage(String image) {
+            this.image = image;
+            return this;
+        }
+
         public AccountSearchBuilder build() {
             return new AccountSearchBuilder(this);
         }

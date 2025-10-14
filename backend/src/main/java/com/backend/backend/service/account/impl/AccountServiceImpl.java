@@ -5,16 +5,22 @@ import com.backend.backend.converter.account.AccountDTOConverter;
 import com.backend.backend.converter.account.AccountSearchBuilderConverter;
 import com.backend.backend.model.account.UserListDTO;
 import com.backend.backend.model.account.AccountDTO;
+import com.backend.backend.model.order.OrderStatsDTO;
 import com.backend.backend.repository.account.AccountRepository;
 import com.backend.backend.repository.account.AdminRepository;
 import com.backend.backend.repository.account.UserRepository;
 import com.backend.backend.repository.account.entity.AccountEntity;
 import com.backend.backend.repository.account.entity.AdminEntity;
 import com.backend.backend.repository.account.entity.UserEntity;
+import com.backend.backend.repository.account.specification.AccountSpecification;
+import com.backend.backend.repository.order.OrderRepository;
 import com.backend.backend.service.account.AccountService;
 
 import com.backend.backend.utils.ImageUtil;
+import com.backend.backend.utils.exception.DuplicateRecordException;
+import com.backend.backend.utils.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -47,24 +53,77 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Transactional
     @Override
     public List<AccountDTO> getAccount(Map<String, Object> params) {
-        AccountSearchBuilder accountSearchBuilder = accountSearchBuilderConverter.toBuilder(params);
-        return accountRepository.getAccount(accountSearchBuilder);
+        AccountSearchBuilder builder = accountSearchBuilderConverter.paramsToBuilder(params);
+        Specification<AccountEntity> spec = AccountSpecification.findByCriteria(builder);
+        List<AccountEntity> entities = accountRepository.findAll(spec);
+
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+
+        List<AccountDTO> accountDTOs = new ArrayList<>();
+        for (AccountEntity entity : entities) {
+            accountDTOs.add(accountDTOConverter.toAccountDTO(entity));
+        }
+
+        Set<Integer> userIds = new HashSet<>();
+        for (AccountDTO dto : accountDTOs) {
+            if ("USER".equals(dto.getRole()) && dto.getProfile() != null) {
+                userIds.add(dto.getProfile().getId());
+            }
+        }
+
+        if (userIds.isEmpty()) {
+            return accountDTOs;
+        }
+
+        List<OrderStatsDTO> statsList = orderRepository.findOrderStatsByUserIds(userIds);
+
+        Map<Integer, OrderStatsDTO> statsMap = new HashMap<>();
+        for (OrderStatsDTO stats : statsList) {
+            statsMap.put(stats.getUserId(), stats);
+        }
+
+        for (AccountDTO dto : accountDTOs) {
+            if ("USER".equals(dto.getRole()) && dto.getProfile() != null) {
+                OrderStatsDTO stats = statsMap.get(dto.getProfile().getId());
+                if (stats != null) {
+                    dto.setOrderCount(stats.getOrderCount().intValue());
+                    dto.setTotalOrderPrice(stats.getTotalAmount() != null ? stats.getTotalAmount().intValue() : 0);
+                }
+            }
+        }
+
+        return accountDTOs;
     }
 
     @Transactional
     @Override
     public AccountDTO createAccount(Map<String, Object> body) {
+        AccountSearchBuilder accountSearchBuilder = accountSearchBuilderConverter.bodyToBuilderCreate(body);
+
+        if (accountRepository.existsByUsernameAndDeletedFalse(accountSearchBuilder.getUsername())) {
+            throw new DuplicateRecordException("Username '" + accountSearchBuilder.getUsername() + "' already " +
+                    "existed!");
+        }
+        if (accountRepository.existsByEmailAndDeletedFalse(accountSearchBuilder.getEmail())) {
+            throw new DuplicateRecordException("Email '" + accountSearchBuilder.getEmail() + "' already existed!");
+        }
+
+
         AccountEntity entity = new AccountEntity();
 
-        entity.setUsername((String) body.get("username"));
-
-        String rawPassword = (String) body.get("password");
+        entity.setUsername(accountSearchBuilder.getUsername());
+        String rawPassword = accountSearchBuilder.getPassword();
         entity.setPassword(passwordEncoder.encode(rawPassword));
-
-        entity.setEmail((String) body.get("email"));
-        entity.setRole((String) body.get("role"));
+        entity.setEmail(accountSearchBuilder.getEmail());
+        entity.setRole(accountSearchBuilder.getRole());
         entity.setCreated_at(LocalDateTime.now());
         entity.setUpdated_at(LocalDateTime.now());
 
@@ -89,59 +148,68 @@ public class AccountServiceImpl implements AccountService {
         List<AccountEntity> entities = new ArrayList<>();
 
         for (Map<String, Object> body : bodyList) {
-            String username = (String) body.get("username");
-            String email = (String) body.get("email");
+            AccountSearchBuilder accountSearchBuilder = accountSearchBuilderConverter.bodyToBuilderCreate(body);
+            String username = accountSearchBuilder.getUsername();
+            String email = accountSearchBuilder.getEmail();
 
-            if (accountRepository.existsByUsernameAndDeletedFalse(username)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, username + " already existed!");
+            Optional<AccountEntity> existingAccountOpt = accountRepository.findByEmailIncludeDeleted(email);
+
+            if (existingAccountOpt.isPresent()) {
+                AccountEntity existingAccount = existingAccountOpt.get();
+                if (existingAccount.getDeleted()) {
+                    existingAccount.setUsername(username);
+                    existingAccount.setPassword(passwordEncoder.encode(accountSearchBuilder.getPassword()));
+                    existingAccount.setRole(accountSearchBuilder.getRole().toUpperCase());
+                    existingAccount.setDeleted(false);
+                    existingAccount.setUpdated_at(LocalDateTime.now());
+                    entities.add(existingAccount);
+                } else {
+                    throw new DuplicateRecordException("Email '" + email + "' already existed!");
+                }
+            } else {
+                if (accountRepository.existsByUsernameAndDeletedFalse(username)) {
+                    throw new DuplicateRecordException("Username '" + username + "' already existed!");
+                }
+                AccountEntity account = new AccountEntity();
+                account.setUsername(username);
+                account.setEmail(email);
+                account.setRole(accountSearchBuilder.getRole());
+                account.setCreated_at(LocalDateTime.now());
+                account.setUpdated_at(LocalDateTime.now());
+                account.setPassword(passwordEncoder.encode(accountSearchBuilder.getPassword()));
+
+                if ("USER".equalsIgnoreCase(account.getRole())) {
+                    UserEntity user = new UserEntity();
+                    user.setAccount(account);
+                    account.setUser(user);
+                } else if ("ADMIN".equalsIgnoreCase(account.getRole())) {
+                    AdminEntity admin = new AdminEntity();
+                    admin.setAccount(account);
+                    account.setAdmin(admin);
+                }
+                entities.add(account);
             }
-            if (accountRepository.existsByEmailAndDeletedFalse(email)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, email + " already existed!");
-            }
-
-            AccountEntity account = new AccountEntity();
-            account.setUsername(username);
-            account.setEmail(email);
-            account.setRole((String) body.get("role"));
-            account.setCreated_at(LocalDateTime.now());
-            account.setUpdated_at(LocalDateTime.now());
-            account.setPassword(passwordEncoder.encode((String) body.get("password")));
-
-            if ("USER".equalsIgnoreCase(account.getRole())) {
-                UserEntity user = new UserEntity();
-                user.setAccount(account);
-                account.setUser(user);
-            } else if ("ADMIN".equalsIgnoreCase(account.getRole())) {
-                AdminEntity admin = new AdminEntity();
-                admin.setAccount(account);
-                account.setAdmin(admin);
-            }
-
-            entities.add(account);
         }
 
-        List<AccountEntity> savedEntities = accountRepository.saveAllAndFlush(entities);
+        List<AccountEntity> savedEntities = accountRepository.saveAll(entities);
 
-        return savedEntities.stream()
-                .map(accountDTOConverter::toAccountDTO)
-                .toList();
+        List<AccountDTO> resultDTOs = new ArrayList<>();
+        for (AccountEntity savedEntity : savedEntities) {
+            resultDTOs.add(accountDTOConverter.toAccountDTO(savedEntity));
+        }
+        return resultDTOs;
     }
 
     @Transactional
     @Override
-    public void updateAccount(Integer id, Map<String, Object> body) {
+    public AccountDTO updateAccount(Integer id, Map<String, Object> body) {
         AccountEntity account = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        if (body.containsKey("username")) {
-            account.setUsername((String) body.get("username"));
-        }
-        if (body.containsKey("email")) {
-            account.setEmail((String) body.get("email"));
-        }
-        if (body.containsKey("role")) {
-            account.setRole((String) body.get("role"));
-        }
+        AccountSearchBuilder accountSearchBuilder = accountSearchBuilderConverter.bodyToBuilderUpdate(body);
+        account.setUsername(accountSearchBuilder.getUsername());
+        account.setEmail(accountSearchBuilder.getEmail());
+        account.setRole(accountSearchBuilder.getRole());
         account.setUpdated_at(LocalDateTime.now());
 
         if ("USER".equals(account.getRole())) {
@@ -150,14 +218,10 @@ public class AccountServiceImpl implements AccountService {
                 user = new UserEntity();
                 user.setAccount(account);
             }
-            if (body.containsKey("fullname")) {
-                user.setFullname((String) body.get("fullname"));
-            }
-            if (body.containsKey("address")) {
-                user.setAddress((String) body.get("address"));
-            }
-            if (body.containsKey("image")) {
-                String base64Image = (String) body.get("image");
+            user.setFullname(accountSearchBuilder.getFullname());
+            user.setAddress(accountSearchBuilder.getAddress());
+            if (accountSearchBuilder.getImage() != null) {
+                String base64Image = accountSearchBuilder.getImage();
                 if (base64Image != null && !base64Image.isEmpty()) {
                     String imagePath = ImageUtil.saveImage(base64Image);
                     user.setImage(imagePath);
@@ -171,14 +235,10 @@ public class AccountServiceImpl implements AccountService {
                 admin = new AdminEntity();
                 admin.setAccount(account);
             }
-            if (body.containsKey("fullname")) {
-                admin.setFullname((String) body.get("fullname"));
-            }
-            if (body.containsKey("address")) {
-                admin.setAddress((String) body.get("address"));
-            }
-            if (body.containsKey("image")) {
-                String base64Image = (String) body.get("image");
+            admin.setFullname(accountSearchBuilder.getFullname());
+            admin.setAddress(accountSearchBuilder.getAddress());
+            if (accountSearchBuilder.getImage() != null) {
+                String base64Image = accountSearchBuilder.getImage();
                 if (base64Image != null && !base64Image.isEmpty()) {
                     String imagePath = ImageUtil.saveImage(base64Image);
                     admin.setImage(imagePath);
@@ -188,11 +248,15 @@ public class AccountServiceImpl implements AccountService {
         }
 
         accountRepository.save(account);
+        return accountDTOConverter.toAccountDTO(account);
     }
 
     @Transactional
     @Override
     public void deleteAccount(Integer id) {
+        if (!accountRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Account not found with ID: " + id);
+        }
         accountRepository.deleteById(id);
     }
 

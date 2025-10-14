@@ -4,6 +4,14 @@ public class CategoryDTO {
     private Integer id;
     private String cate_name;
 
+    public CategoryDTO() {
+    }
+
+    public CategoryDTO(Integer id, String cate_name) {
+        this.id = id;
+        this.cate_name = cate_name;
+    }
+
     public Integer getId() {
         return id;
     }

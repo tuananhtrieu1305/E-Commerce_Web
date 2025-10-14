@@ -14,16 +14,16 @@ const PopDeleteAccount = (props) => {
     if (res?.status === 200) {
       messageApi.open({
         type: "success",
-        content: "Account Deleted!",
+        content: res.message,
         duration: 2,
       });
       setTimeout(() => {
         refreshTable();
       }, 1000);
-    } else if (res?.status === 500) {
+    } else {
       messageApi.open({
         type: "error",
-        content: "Internal Server Error!",
+        content: res.message,
       });
     }
   };

@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Component
 public class AccountSearchBuilderConverter {
-    public AccountSearchBuilder toBuilder(Map<String, Object> params) {
+    public AccountSearchBuilder paramsToBuilder(Map<String, Object> params) {
         return new AccountSearchBuilder.Builder()
                 .setId(MapUtil.getObject(params, "id", Integer.class))
                 .setUsername(MapUtil.getObject(params, "username", String.class))
@@ -21,6 +21,27 @@ public class AccountSearchBuilderConverter {
                 .setAddress(MapUtil.getObject(params, "address", String.class))
                 .setStartTime(MapUtil.getObject(params, "startTime", String.class))
                 .setEndTime(MapUtil.getObject(params, "endTime", String.class))
+                .build();
+    }
+
+    public AccountSearchBuilder bodyToBuilderCreate(Map<String, Object> body) {
+        return new AccountSearchBuilder.Builder()
+                .setId(MapUtil.getObject(body, "id", Integer.class))
+                .setUsername(MapUtil.getObject(body, "username", String.class))
+                .setEmail(MapUtil.getObject(body, "email", String.class))
+                .setRole(MapUtil.getObject(body, "role", String.class))
+                .setPassword(MapUtil.getObject(body, "password", String.class))
+                .build();
+    }
+
+    public AccountSearchBuilder bodyToBuilderUpdate(Map<String, Object> body) {
+        return new AccountSearchBuilder.Builder()
+                .setUsername(MapUtil.getObject(body, "username", String.class))
+                .setEmail(MapUtil.getObject(body, "email", String.class))
+                .setRole(MapUtil.getObject(body, "role", String.class))
+                .setFullname(MapUtil.getObject(body, "fullname", String.class))
+                .setAddress(MapUtil.getObject(body, "address", String.class))
+                .setImage(MapUtil.getObject(body, "image", String.class))
                 .build();
     }
 }

@@ -3,7 +3,6 @@ import formatVND from "../../../helpers/ConvertMoney";
 
 const OrderTab = (props) => {
   const { accountDataDetail } = props;
-  console.log(accountDataDetail);
 
   const items = [
     {

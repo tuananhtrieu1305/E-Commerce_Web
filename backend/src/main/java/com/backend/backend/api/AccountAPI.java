@@ -2,48 +2,59 @@ package com.backend.backend.api;
 
 import com.backend.backend.model.account.AccountDTO;
 import com.backend.backend.model.account.UserListDTO;
+import com.backend.backend.model.response.ApiResponse;
 import com.backend.backend.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/account")
 public class AccountAPI {
 
     @Autowired
     private AccountService accountService;
 
-    @GetMapping(value = "/api/account/")
-    public List<AccountDTO> getAccount(@RequestParam Map<String, Object> params) {
-        List<AccountDTO> res = accountService.getAccount(params);
-        return res;
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<AccountDTO>>> getAccount(@RequestParam Map<String, Object> params) {
+        List<AccountDTO> accounts = accountService.getAccount(params);
+        return ResponseEntity.ok(ApiResponse.success(accounts, "Get accounts succeeded!"));
     }
 
-    @PostMapping(value = "/api/account/")
-    public AccountDTO createAccount(@RequestBody Map<String, Object> body) {
-        return accountService.createAccount(body);
+    @PostMapping
+    public ResponseEntity<ApiResponse<AccountDTO>> createAccount(@RequestBody Map<String, Object> body) {
+        AccountDTO newAccount = accountService.createAccount(body);
+        ApiResponse<AccountDTO> response = ApiResponse.success(newAccount, "Create account succeeded!");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/api/accounts/batch")
-    public List<AccountDTO> createListAccounts(@RequestBody List<Map<String, Object>> bodyList) {
-        return accountService.createListAccounts(bodyList);
+    @PostMapping("/batch")
+    public ResponseEntity<ApiResponse<List<AccountDTO>>> createListAccounts(@RequestBody List<Map<String, Object>> bodyList) {
+        List<AccountDTO> newAccounts = accountService.createListAccounts(bodyList);
+        ApiResponse<List<AccountDTO>> response = ApiResponse.success(newAccounts, "Create accounts succeeded!");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 
-    @PutMapping(value = "/api/account/{id}")
-    public void updateAccount(@PathVariable Integer id, @RequestBody Map<String, Object> body) {
-        accountService.updateAccount(id, body);
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<AccountDTO>> updateAccount(@PathVariable Integer id, @RequestBody Map<String, Object> body) {
+        AccountDTO updatedAccount = accountService.updateAccount(id, body);
+        return ResponseEntity.ok(ApiResponse.success(updatedAccount, "Update account succeeded!"));
     }
 
-    @DeleteMapping(value = "/api/account/{id}")
-    public void deleteAccount(@PathVariable Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteAccount(@PathVariable Integer id) {
         accountService.deleteAccount(id);
+        return ResponseEntity.ok(ApiResponse.success("Delete account succeeded!"));
     }
 
-    @GetMapping(value = "/api/account/user_list")
-    public List<UserListDTO> getUserList() {
-        return accountService.getUserList();
+    @GetMapping("/user_list")
+    public ResponseEntity<ApiResponse<List<UserListDTO>>> getUserList() {
+        List<UserListDTO> users = accountService.getUserList();
+        return ResponseEntity.ok(ApiResponse.success(users, "Get user list succeeded!"));
     }
 }

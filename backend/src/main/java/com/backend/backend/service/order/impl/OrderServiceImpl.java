@@ -11,14 +11,18 @@ import com.backend.backend.repository.order.OrderItemRepository;
 import com.backend.backend.repository.order.OrderRepository;
 import com.backend.backend.repository.order.entity.OrderEntity;
 import com.backend.backend.repository.order.entity.OrderItemEntity;
+import com.backend.backend.repository.order.specification.OrderSpecification;
 import com.backend.backend.repository.product.ProductRepository;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import com.backend.backend.service.order.OrderService;
+import com.backend.backend.utils.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,82 +49,126 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDTO> getOrder(Map<String, Object> params) {
         OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.paramsToBuilder(params);
-        return orderRepository.getOrder(orderSearchBuilder);
+        Specification<OrderEntity> spec = OrderSpecification.findByCriteria(orderSearchBuilder);
+        List<OrderEntity> entities = orderRepository.findAll(spec);
+        return orderDTOConverter.toOrderDTOList(entities);
     }
 
     @Transactional
     @Override
     public OrderDTO createOrder(Map<String, Object> body) {
-        OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.bodyToBuilder(body);
-        OrderDTO res = orderDTOConverter.toOrderDTO(orderRepository.createOrder(orderSearchBuilder));
-        return res;
+        OrderSearchBuilder builder = orderSearchBuilderConverter.bodyToBuilder(body);
+
+        UserEntity user = userRepository.findById(builder.getCustomer_id())
+                .orElseThrow(() -> new ResourceNotFoundException("User can not be found with ID: " + builder.getCustomer_id()));
+
+        OrderEntity order = new OrderEntity();
+        order.setUser(user);
+        order.setAddress(builder.getAddress());
+        order.setPhone(builder.getPhone());
+        order.setNote(builder.getNote());
+        order.setCreated_at(java.time.LocalDateTime.now());
+        order.setUpdated_at(java.time.LocalDateTime.now());
+
+
+        int totalCost = 0;
+        List<OrderItemEntity> orderItems = new ArrayList<>();
+
+        for (OrderItemSearchBuilder itemRequest : builder.getOrder_items()) {
+            ProductEntity product = productRepository.findById(itemRequest.getProd_id())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + itemRequest.getProd_id()));
+
+            if (product.getStock() < itemRequest.getQuantity()) {
+                throw new IllegalStateException("Product '" + product.getTitle() + "' doesn't have enough in stock.");
+            }
+
+            product.setStock(product.getStock() - itemRequest.getQuantity());
+
+            OrderItemEntity orderItem = new OrderItemEntity();
+            orderItem.setProduct(product);
+            orderItem.setItem_quantity(itemRequest.getQuantity());
+            orderItem.setItem_price(product.getPrice());
+            orderItem.setOrder(order);
+
+            orderItems.add(orderItem);
+
+            totalCost += product.getPrice() * itemRequest.getQuantity();
+        }
+
+        order.setOrderItems(orderItems);
+        order.setTotal_cost(totalCost);
+
+        OrderEntity savedOrder = orderRepository.save(order);
+
+        return orderDTOConverter.toOrderDTO(savedOrder);
     }
 
     @Transactional
     @Override
-    public void updateOrder(Integer id, Map<String, Object> body) {
-        OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.bodyToBuilder(body);
+    public OrderDTO updateOrder(Integer id, Map<String, Object> body) {
+        OrderSearchBuilder builder = orderSearchBuilderConverter.bodyToBuilder(body);
+
         OrderEntity order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
 
         if (order.getOrderItems() != null) {
             for (OrderItemEntity existingItem : order.getOrderItems()) {
-                ProductEntity existingProduct = existingItem.getProduct();
-                existingProduct.setStock(existingProduct.getStock() + existingItem.getItem_quantity());
-                productRepository.save(existingProduct);
+                ProductEntity product = existingItem.getProduct();
+                product.setStock(product.getStock() + existingItem.getItem_quantity());
             }
-
             order.getOrderItems().clear();
         }
 
-        order.setAddress(orderSearchBuilder.getAddress());
-        order.setPhone(orderSearchBuilder.getPhone());
-        order.setNote(orderSearchBuilder.getNote());
-        order.setUpdated_at(LocalDateTime.now());
+        order.setAddress(builder.getAddress());
+        order.setPhone(builder.getPhone());
+        order.setNote(builder.getNote());
+        order.setUpdated_at(java.time.LocalDateTime.now());
 
         int totalCost = 0;
-        if (orderSearchBuilder.getOrder_items() != null) {
-            for (OrderItemSearchBuilder item : orderSearchBuilder.getOrder_items()) {
-                ProductEntity product = productRepository.findById(item.getProd_id())
-                        .orElseThrow(() -> new RuntimeException("Product not found!"));
+        if (builder.getOrder_items() != null && !builder.getOrder_items().isEmpty()) {
+            for (OrderItemSearchBuilder itemRequest : builder.getOrder_items()) {
+                ProductEntity product = productRepository.findById(itemRequest.getProd_id())
+                        .orElseThrow(() -> new ResourceNotFoundException("Product not found ID: " + itemRequest.getProd_id()));
 
-                if (product.getStock() < item.getQuantity()) {
-                    throw new RuntimeException("Insufficient stock for product: " + product.getTitle());
+                if (product.getStock() < itemRequest.getQuantity()) {
+                    throw new IllegalStateException("Product '" + product.getTitle() + "' doesn't have enough in " +
+                            "stock.");
                 }
 
-                product.setStock(product.getStock() - item.getQuantity());
-                productRepository.save(product);
+                product.setStock(product.getStock() - itemRequest.getQuantity());
 
-                OrderItemEntity orderItem = new OrderItemEntity();
-                orderItem.setProduct(product);
-                orderItem.setItem_quantity(item.getQuantity());
-                orderItem.setItem_price(product.getPrice());
-                orderItem.setOrder(order);
+                OrderItemEntity newOrderItem = new OrderItemEntity();
+                newOrderItem.setProduct(product);
+                newOrderItem.setItem_quantity(itemRequest.getQuantity());
+                newOrderItem.setItem_price(product.getPrice());
+                newOrderItem.setOrder(order);
 
-                totalCost += product.getPrice() * item.getQuantity();
+                order.getOrderItems().add(newOrderItem);
 
-                order.getOrderItems().add(orderItem);
+                totalCost += product.getPrice() * itemRequest.getQuantity();
             }
         }
 
         order.setTotal_cost(totalCost);
-        orderRepository.save(order);
+
+        OrderEntity updatedOrder = orderRepository.save(order);
+
+        return orderDTOConverter.toOrderDTO(updatedOrder);
     }
 
     @Transactional
     @Override
     public void deleteOrder(Integer id) {
         OrderEntity order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
 
         if (order.getOrderItems() != null) {
             for (OrderItemEntity orderItem : order.getOrderItems()) {
                 ProductEntity product = orderItem.getProduct();
                 product.setStock(product.getStock() + orderItem.getItem_quantity());
-                productRepository.save(product);
             }
         }
 
-        orderRepository.deleteById(id);
+        orderRepository.delete(order);
     }
 }

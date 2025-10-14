@@ -87,10 +87,10 @@ const FormCreateManyAccounts = (props) => {
     const res = await createListAccounts(dataList);
     console.log(res);
 
-    if (res?.length > 0) {
+    if (res?.status === 200) {
       messageApi.open({
         type: "success",
-        content: "List of Account Created!",
+        content: res.message,
       });
       setDataImport([]);
       setOpenAccountCreate(false);

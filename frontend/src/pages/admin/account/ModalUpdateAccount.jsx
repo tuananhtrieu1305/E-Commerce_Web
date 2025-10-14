@@ -81,17 +81,17 @@ const ModalUpdateAccount = (props) => {
     if (res?.status === 200) {
       messageApi.open({
         type: "success",
-        content: "Account Updated!",
+        content: res.message,
       });
       form.resetFields();
       setFileList([]);
       setAccountDataDetail(null);
       setOpenAccountUpdate(false);
       refreshTable();
-    } else if (res?.status === 500) {
+    } else {
       messageApi.open({
         type: "error",
-        content: "Internal Server Error",
+        content: res.message,
       });
     }
     setIsSubmit(false);

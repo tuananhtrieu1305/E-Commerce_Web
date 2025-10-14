@@ -2,7 +2,6 @@ import { Descriptions, Tag } from "antd";
 
 const ProfileTab = (props) => {
   const { accountDataDetail } = props;
-  console.log(accountDataDetail);
 
   const items = [
     {
