@@ -1,11 +1,13 @@
 package com.backend.backend.service.cart;
 
 import com.backend.backend.model.cart.CartDTO;
+import com.backend.backend.model.cart.CartItemDTO;
+
+import java.util.List;
 
 public interface CartService {
-    CartDTO getCart(Integer userId);
+    List<CartItemDTO> getCart(Integer userId);
     CartDTO addItem(Integer userId, Integer productId, int qty);
     CartDTO changeQty(Integer userId, Integer itemId, int delta);
-
     void removeItem(Integer userId);
 }

@@ -2,6 +2,7 @@ package com.backend.backend.service.cart;
 
 import com.backend.backend.converter.cart.CartDTOConverter;
 import com.backend.backend.model.cart.CartDTO;
+import com.backend.backend.model.cart.CartItemDTO;
 import com.backend.backend.repository.cart.CartItemRepository;
 import com.backend.backend.repository.cart.CartRepository;
 import com.backend.backend.repository.cart.entity.Cart;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.PublicKey;
 import java.util.*;
 
 @Service
@@ -55,7 +57,7 @@ public class CartServiceImpl implements CartService {
         cart.setGrandTotal(subtotal);
     }
 
-    public CartDTO getCart(Integer userId) {
+    public List<CartItemDTO> getCart(Integer userId) {
         Cart cart = cartRepo.findByUserId(userId)
                 .orElseGet(() -> {
                     Cart c = new Cart();
@@ -63,8 +65,7 @@ public class CartServiceImpl implements CartService {
                     return cartRepo.save(c);
                 });
 
-        reprice(cart);
-        return cartConv.toDTO(cart);
+        return cartConv.toDTO(cart).getItems();
     }
 
 
@@ -143,6 +144,7 @@ public class CartServiceImpl implements CartService {
         cartRepo.save(cart);
         return cartConv.toDTO(cart);
     }
+
     public CartDTO changeQty(Integer userId, Integer itemId, int delta) {
         CartItem it = itemRepo.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
