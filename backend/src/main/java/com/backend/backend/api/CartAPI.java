@@ -5,6 +5,7 @@ import com.backend.backend.model.cart.CartItemDTO;
 import com.backend.backend.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class CartAPI {
         return cartService.addItem(userId, productId, qty);
     }
 
+
     @PatchMapping(value = "/api/cart/items/{itemId}")
     public CartDTO changeQty(@PathVariable Integer itemId,
                              @RequestBody Map<String, Object> body) {
@@ -37,17 +39,22 @@ public class CartAPI {
         int delta  = toInt(body.get("delta"));
         return cartService.changeQty(userId, itemId, delta);
     }
-    @PutMapping("/api/cart/items/{itemId}/qty")
-    public CartDTO setQty(@PathVariable Integer itemId, @RequestBody Map<String,Object> body){
-        int userId = toInt(body.get("userId"));
-        int qty    = toInt(body.get("qty"));
-        return cartService.addItem(userId, itemId, qty);
+    @PutMapping("/api/cart/items/{productId}/qty")
+    public CartDTO setQty(@RequestParam("userId") Integer userId,
+                          @PathVariable Integer productId,
+                          @RequestBody Map<String, Object> body) {
+        int qty = toInt(body.get("qty"));
+        return cartService.setQty(userId, productId, qty);
     }
 
-    @DeleteMapping(value = "/api/cart/items/{itemId}")
-    public void removeItem(@PathVariable Integer itemId) {
-        cartService.removeItem(itemId);
+    @DeleteMapping("/api/cart/items/{itemId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeItem( @RequestParam("userId") Integer userId,
+                            @PathVariable Integer itemId
+                          ) {
+        cartService.removeItem(userId, itemId);
     }
+
     private int toInt(Object v) {
         return Integer.parseInt(String.valueOf(v));
     }

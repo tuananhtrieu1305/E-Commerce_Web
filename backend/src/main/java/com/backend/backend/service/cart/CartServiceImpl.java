@@ -144,6 +144,21 @@ public class CartServiceImpl implements CartService {
         cartRepo.save(cart);
         return cartConv.toDTO(cart);
     }
+    public CartDTO setQty(Integer userId, Integer productId, int qty) {
+        if (qty < 0) throw new IllegalArgumentException("Quantity must be ≥ 0");
+        CartItem item = itemRepo.findByCart_UserIdAndProductId(userId, productId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
+        Cart cart = item.getCart();
+        if (qty == 0) {
+            cart.getItems().remove(item);
+        } else {
+            item.setQuantity(qty);
+            item.setLineTotal(item.getUnitPrice().multiply(BigDecimal.valueOf(qty)));
+        }
+        reprice(cart);
+        cartRepo.save(cart);
+        return cartConv.toDTO(cart);
+    }
 
     public CartDTO changeQty(Integer userId, Integer itemId, int delta) {
         CartItem it = itemRepo.findById(itemId)
@@ -160,15 +175,16 @@ public class CartServiceImpl implements CartService {
         reprice(it.getCart());
         return cartConv.toDTO(cartRepo.save(it.getCart()));
     }
-    public void removeItem(Integer itemId) {
-        CartItem item = itemRepo.findById(itemId)
+    public CartDTO removeItem(Integer userId, Integer itemId) {
+        CartItem item = itemRepo.findByCart_UserIdAndProductId(userId,itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
+
         Cart cart = item.getCart();
-        cart.getItems().remove(item);
-        itemRepo.delete(item);
+        cart.getItems().remove(item);          // orphanRemoval=true sẽ tự xóa
         reprice(cart);
-        cartRepo.save(cart);
+        return cartConv.toDTO(cartRepo.save(cart));
     }
+
 
 
 
