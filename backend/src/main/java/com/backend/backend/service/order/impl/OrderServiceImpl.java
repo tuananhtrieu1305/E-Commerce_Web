@@ -17,6 +17,8 @@ import com.backend.backend.service.order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -85,7 +87,10 @@ public class OrderServiceImpl implements OrderService {
                         .orElseThrow(() -> new RuntimeException("Product not found!"));
 
                 if (product.getStock() < item.getQuantity()) {
-                    throw new RuntimeException("Insufficient stock for product: " + product.getTitle());
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Sản phẩm \"" + product.getTitle() + "\" không đủ tồn kho"
+                    );
                 }
 
                 product.setStock(product.getStock() - item.getQuantity());

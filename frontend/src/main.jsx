@@ -12,6 +12,8 @@ import CartPage from "./pages/cart/CartPage.jsx";
 import { ConfigProvider } from "antd";
 import enUS from "antd/es/calendar/locale/en_US.js";
 import { CartProvider } from "./context/CartContext.jsx";
+import { CheckoutProvider } from "./context/CheckoutContext.jsx";
+import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
         path: "/cart", // <-- THÊM ROUTE NÀY
         element: <CartPage />,
       },
+      {
+        path: "/checkout",
+        element: (
+          <CheckoutProvider> {/* BỌC Ở ĐÂY */}
+            <CheckoutPage />
+          </CheckoutProvider>
+        ),
+      }
     ],
   },
   {

@@ -31,14 +31,6 @@ public class CartAPI {
         return cartService.addItem(userId, productId, qty);
     }
 
-
-    @PatchMapping(value = "/api/cart/items/{itemId}")
-    public CartDTO changeQty(@PathVariable Integer itemId,
-                             @RequestBody Map<String, Object> body) {
-        int userId = toInt(body.get("userId"));
-        int delta  = toInt(body.get("delta"));
-        return cartService.changeQty(userId, itemId, delta);
-    }
     @PutMapping("/api/cart/items/{productId}/qty")
     public CartDTO setQty(@RequestParam("userId") Integer userId,
                           @PathVariable Integer productId,

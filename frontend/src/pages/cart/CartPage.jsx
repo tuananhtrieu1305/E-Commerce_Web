@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../../context/CartContext.jsx';
 import { Empty,Button,Spin } from 'antd/lib/index.js';
+import { Link } from "react-router-dom";
 
 // Component Spinner đơn giản
  const Spinner = () => (
@@ -152,6 +153,7 @@ export default function CartPage() {
                 {formatCurrency(subtotal)}
               </span>
             </div>
+            <Link to="/checkout" className="w-full">
             <Button
               type="primary"
               size="large"
@@ -161,6 +163,7 @@ export default function CartPage() {
             >
               Tiến hành Thanh toán
             </Button>
+            </Link>
             {loading && (
               <div className="text-center mt-4 text-gray-500">
                 <Spin size="small" /> Đang cập nhật...

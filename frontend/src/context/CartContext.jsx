@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback,useRef } from 'react';
-import { getCart, apiRemoveItem,apiChangeQty,apiAddItem ,apiSetQty} from '../services/cartService';
+import { getCart, apiRemoveItem,apiAddItem ,apiSetQty} from '../services/cartService';
 
 // 1. Tạo Context
 const CartContext = createContext(null);

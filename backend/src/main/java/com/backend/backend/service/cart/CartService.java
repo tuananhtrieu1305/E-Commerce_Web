@@ -9,6 +9,5 @@ public interface CartService {
     List<CartItemDTO> getCart(Integer userId);
     CartDTO addItem(Integer userId, Integer productId, int qty);
     CartDTO setQty(Integer userId, Integer productId, int qty);
-    CartDTO changeQty(Integer userId, Integer itemId, int delta);
     CartDTO removeItem(Integer userId,Integer productId);
 }

@@ -68,45 +68,6 @@ public class CartServiceImpl implements CartService {
         return cartConv.toDTO(cart).getItems();
     }
 
-
-
-
-//    public Long checkoutSelected(Integer userId) {
-//        Cart cart = cartRepo.findByUserId(userId)
-//                .orElseThrow(() -> new EntityNotFoundException("Cart not found"));
-//
-//        List<CartItem> chosen = cart.getItems() == null ? List.of() :
-//                cart.getItems().stream()
-//                        .filter(i -> Boolean.TRUE.equals(i.getSelected()))
-//                        .collect(Collectors.toList());
-//        if (chosen.isEmpty())
-//            throw new IllegalStateException("No items selected");
-//
-//        Cart shadow = new Cart();
-//        shadow.setUserId(cart.getUserId());
-//        for (CartItem i : chosen) {
-//            CartItem copy = new CartItem();
-//            copy.setCart(shadow);
-//            copy.setProductId(i.getProductId());
-//            copy.setUnitPrice(i.getUnitPrice());
-//            copy.setQuantity(i.getQuantity());
-//            copy.setSelected(true);
-//            shadow.getItems().add(copy);
-//        }
-//        reprice(shadow);
-//
-//        Long orderId = orderService.createFromCart(shadow);
-//
-//
-//        cart.getItems().removeIf(i -> Boolean.TRUE.equals(i.getSelected()));
-//        reprice(cart);
-//        cartRepo.save(cart);
-//
-//        return orderId;
-//    }
-
-
-
     public CartDTO addItem(Integer userId, Integer productId, int qty) {
         if (qty <= 0) throw new IllegalArgumentException("Quantity must be > 0");
 
@@ -160,21 +121,6 @@ public class CartServiceImpl implements CartService {
         return cartConv.toDTO(cart);
     }
 
-    public CartDTO changeQty(Integer userId, Integer itemId, int delta) {
-        CartItem it = itemRepo.findById(itemId)
-                .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
-//        if (!it.getCart().getUserId().equals(userId)) throw new SecurityException("Forbidden");
-
-        int newQty = it.getQuantity() + delta;
-        if (newQty <= 0) {
-            it.getCart().getItems().remove(it);
-            itemRepo.delete(it);
-        } else {
-            it.setQuantity(newQty);
-        }
-        reprice(it.getCart());
-        return cartConv.toDTO(cartRepo.save(it.getCart()));
-    }
     public CartDTO removeItem(Integer userId, Integer itemId) {
         CartItem item = itemRepo.findByCart_UserIdAndProductId(userId,itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
