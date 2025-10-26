@@ -1,8 +1,8 @@
-import AdminTable from "./account/AdminTable";
+import AccountTable from "./account/AccountTable";
 const ManageAdmins = () => {
   return (
     <>
-      <AdminTable />
+      <AccountTable role="ADMIN" headerTitle="Admin's Accounts" />
     </>
   );
 };

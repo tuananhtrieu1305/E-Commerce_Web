@@ -1,7 +1,7 @@
 import axios from "./Axios_Customize";
 
 export const getOrder = (query) => {
-  const url = `/api/order/${query}`;
+  const url = `/api/order${query}`;
   return axios.get(url);
 };
 
@@ -16,6 +16,6 @@ export const deleteOrder = (id) => {
 };
 
 export const createOrder = (payload) => {
-  const url = "/api/order/";
+  const url = "/api/order";
   return axios.post(url, payload);
 };

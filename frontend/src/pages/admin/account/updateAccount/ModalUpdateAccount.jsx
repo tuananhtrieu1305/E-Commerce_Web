@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { updateAccount } from "../../../services/AccountAPI";
+import { updateAccount } from "../../../../services/AccountAPI";
 
 const ModalUpdateAccount = (props) => {
   const {
@@ -151,7 +151,9 @@ const ModalUpdateAccount = (props) => {
           form.submit();
         }}
         width={800}
-        title={`${accountDataDetail?.profile?.fullname}'s Profile`}
+        title={`${
+          accountDataDetail?.profile?.fullname || accountDataDetail?.username
+        }'s Profile`}
         open={openAccountUpdate}
         onCancel={() => {
           form.resetFields();

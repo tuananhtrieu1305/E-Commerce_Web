@@ -35,14 +35,14 @@ public class AccountSpecification {
             }
 
             if (StringUtils.hasText(criteria.getFullname())) {
-                Predicate userFullname = cb.like(root.get("user").get("fullname"), "%" + criteria.getFullname() + "%");
-                Predicate adminFullname = cb.like(root.get("admin").get("fullname"), "%" + criteria.getFullname() + "%");
+                Predicate userFullname = cb.like(root.join("user", JoinType.LEFT).get("fullname"), "%" + criteria.getFullname() + "%");
+                Predicate adminFullname = cb.like(root.join("admin", JoinType.LEFT).get("fullname"), "%" + criteria.getFullname() + "%");
                 predicates.add(cb.or(userFullname, adminFullname));
             }
 
             if (StringUtils.hasText(criteria.getAddress())) {
-                Predicate userAddress = cb.like(root.get("user").get("address"), "%" + criteria.getAddress() + "%");
-                Predicate adminAddress = cb.like(root.get("admin").get("address"), "%" + criteria.getAddress() + "%");
+                Predicate userAddress = cb.like(root.join("user", JoinType.LEFT).get("address"), "%" + criteria.getAddress() + "%");
+                Predicate adminAddress = cb.like(root.join("admin", JoinType.LEFT).get("address"), "%" + criteria.getAddress() + "%");
                 predicates.add(cb.or(userAddress, adminAddress));
             }
 

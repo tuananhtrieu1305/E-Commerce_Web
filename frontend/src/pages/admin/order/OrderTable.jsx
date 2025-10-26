@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { EditTwoTone, PlusOutlined } from "@ant-design/icons";
 import { ProTable } from "@ant-design/pro-components";
-import { Button } from "antd";
+import { Button, Tooltip } from "antd";
 import { getOrder } from "../../../services/OrderAPI";
 import formatVND from "../../../helpers/ConvertMoney";
-import ModalViewDetailOrder from "./ModalViewDetailOrder";
-import ModalUpdateOrder from "./ModalUpdateOrder";
+import ModalViewDetailOrder from "./viewDetail/ModalViewDetailOrder";
+import ModalUpdateOrder from "./updateOrder/ModalUpdateOrder";
 import PopDeleteOrder from "./PopDeleteOrder";
-import ModalCreateOrder from "./ModalCreateOrder";
+import ModalCreateOrder from "./createOrder/ModalCreateOrder";
 
 const OrderTable = () => {
   const actionRef = useRef();
@@ -115,20 +115,22 @@ const OrderTable = () => {
       render(dom, entity, index, action, schema) {
         return (
           <>
-            <EditTwoTone
-              twoToneColor="#f57800"
-              style={{
-                cursor: "pointer",
-                marginRight: 15,
-                padding: "5px",
-                fontSize: "18px",
-              }}
-              className="hover:translate-y-[-5px] hover:top-[5px] transition-all"
-              onClick={() => {
-                setOpenModalUpdateOrder(true);
-                setOrderDataDetail(entity);
-              }}
-            />
+            <Tooltip title="Edit">
+              <EditTwoTone
+                twoToneColor="#f57800"
+                style={{
+                  cursor: "pointer",
+                  marginRight: 15,
+                  padding: "5px",
+                  fontSize: "18px",
+                }}
+                className="hover:translate-y-[-5px] hover:top-[5px] transition-all"
+                onClick={() => {
+                  setOpenModalUpdateOrder(true);
+                  setOrderDataDetail(entity);
+                }}
+              />
+            </Tooltip>
             <PopDeleteOrder
               orderDataDetail={entity}
               refreshTable={refreshTable}
@@ -176,7 +178,7 @@ const OrderTable = () => {
           const res = await getOrder(query);
           await waitTime(80);
           return {
-            data: res,
+            data: res.data,
             page: 1,
             success: true,
             // "total": 30
@@ -184,7 +186,7 @@ const OrderTable = () => {
         }}
         rowKey="id"
         pagination={{
-          pageSize: 8,
+          pageSize: 5,
           onChange: (page) => console.log(page),
         }}
         headerTitle="MANAGE ORDERS"

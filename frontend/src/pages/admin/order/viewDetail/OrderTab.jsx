@@ -74,10 +74,6 @@ const OrderTab = (props) => {
     },
   ];
 
-  return (
-    <div className="border-2 rounded-2xl border-amber-100">
-      <Descriptions bordered items={items} />
-    </div>
-  );
+  return <Descriptions bordered items={items} />;
 };
 export default OrderTab;

@@ -1,5 +1,5 @@
 import { Descriptions } from "antd";
-import formatVND from "../../../helpers/ConvertMoney";
+import formatVND from "../../../../helpers/ConvertMoney";
 
 const OrderTab = (props) => {
   const { accountDataDetail } = props;
@@ -36,10 +36,6 @@ const OrderTab = (props) => {
     },
   ];
 
-  return (
-    <div className="border-2 rounded-2xl border-amber-100">
-      <Descriptions bordered items={items} />
-    </div>
-  );
+  return <Descriptions bordered items={items} />;
 };
 export default OrderTab;

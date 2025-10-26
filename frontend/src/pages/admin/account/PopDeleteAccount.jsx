@@ -1,5 +1,5 @@
 import { DeleteTwoTone } from "@ant-design/icons";
-import { message, Popconfirm } from "antd";
+import { message, Popconfirm, Tooltip } from "antd";
 import { deleteAccount } from "../../../services/AccountAPI";
 
 const PopDeleteAccount = (props) => {
@@ -45,11 +45,13 @@ const PopDeleteAccount = (props) => {
         okText="Yes"
         cancelText="No"
       >
-        <DeleteTwoTone
-          twoToneColor="#ff4d4f"
-          className="hover:translate-y-[-5px] hover:top-[5px] transition-all"
-          style={{ cursor: "pointer", padding: "5px", fontSize: "18px" }}
-        />
+        <Tooltip title="Delete">
+          <DeleteTwoTone
+            twoToneColor="#ff4d4f"
+            className="hover:translate-y-[-5px] hover:top-[5px] transition-all"
+            style={{ cursor: "pointer", padding: "5px", fontSize: "18px" }}
+          />
+        </Tooltip>
       </Popconfirm>
     </>
   );

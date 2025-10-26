@@ -3,14 +3,14 @@ import { Table, Upload, Button } from "antd";
 import { useState } from "react";
 import Exceljs from "exceljs";
 import { Buffer } from "buffer";
-import { createListAccounts } from "../../../services/AccountAPI";
+import { createListProducts } from "../../../../services/ProductAPI";
 
-const FormCreateManyAccounts = (props) => {
-  const { setOpenAccountCreate, refreshTable, messageApi } = props;
+const FormCreateListProduct = (props) => {
+  const { setOpenModalCreateProduct, refreshTable, messageApi } = props;
   const { Dragger } = Upload;
   const [dataImport, setDataImport] = useState([]);
 
-  const props_Val = {
+  const props_Upload = {
     name: "file",
     multiple: false,
     maxCount: 1,
@@ -76,15 +76,17 @@ const FormCreateManyAccounts = (props) => {
   };
 
   const handleImportList = async () => {
-    const dataList = dataImport.map((item) => ({
-      username: item.username,
-      password: import.meta.env.VITE_USER_CREATE_DEFAULT_PASSWORD,
-      email: item.email,
-      role: item.role,
+    const payload = dataImport.map((item) => ({
+      title: item.title,
+      product_info: item.product_info,
+      price: Number(item.price) || 0,
+      stock: Number(item.stock) || 0,
+      seller_name: item.seller_name,
+      cate_name: item.cate_name,
     }));
-    console.log(dataList);
+    console.log(payload);
 
-    const res = await createListAccounts(dataList);
+    const res = await createListProducts(payload);
     console.log(res);
 
     if (res?.status === 200) {
@@ -93,7 +95,7 @@ const FormCreateManyAccounts = (props) => {
         content: res.message,
       });
       setDataImport([]);
-      setOpenAccountCreate(false);
+      setOpenModalCreateProduct(false);
       refreshTable();
     } else {
       messageApi.open({
@@ -103,9 +105,18 @@ const FormCreateManyAccounts = (props) => {
     }
   };
 
+  const columns = [
+    { dataIndex: "title", title: "Title" },
+    { dataIndex: "product_info", title: "Product Info", ellipsis: true },
+    { dataIndex: "price", title: "Price" },
+    { dataIndex: "stock", title: "Stock" },
+    { dataIndex: "seller_name", title: "Seller Name" },
+    { dataIndex: "cate_name", title: "Category Name" },
+  ];
+
   return (
     <>
-      <Dragger {...props_Val}>
+      <Dragger {...props_Upload}>
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
@@ -116,25 +127,25 @@ const FormCreateManyAccounts = (props) => {
           Support for a single upload. Only accept .csv, .xls, .xlsx
         </p>
       </Dragger>
+
       <div style={{ paddingTop: 20 }}>
         <Table
-          title={() => <span>Data of Uploaded File:</span>}
+          title={() => <span>Preview Data ({dataImport.length} items):</span>}
           pagination={{ pageSize: 5 }}
           size="small"
           dataSource={dataImport}
-          columns={[
-            { dataIndex: "username", title: "Username" },
-            { dataIndex: "email", title: "Email" },
-            { dataIndex: "role", title: "Role" },
-          ]}
+          columns={columns}
+          rowKey={(record, index) => `${record.title || "row"}-${index}`}
+          scroll={{ x: 1500 }}
         />
       </div>
       <Button
         type="primary"
-        className="float-end"
+        className="float-right mt-4"
         onClick={() => {
           handleImportList();
         }}
+        disabled={dataImport.length === 0}
       >
         Import
       </Button>
@@ -142,4 +153,4 @@ const FormCreateManyAccounts = (props) => {
   );
 };
 
-export default FormCreateManyAccounts;
+export default FormCreateListProduct;

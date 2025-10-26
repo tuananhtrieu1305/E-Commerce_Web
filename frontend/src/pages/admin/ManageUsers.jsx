@@ -1,9 +1,9 @@
-import UserTable from "./account/UserTable";
+import AccountTable from "./account/AccountTable";
 
 const ManageUsers = () => {
   return (
     <>
-      <UserTable />
+      <AccountTable role="USER" headerTitle="User's Accounts" />
     </>
   );
 };

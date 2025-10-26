@@ -1,62 +1,52 @@
 import { EditTwoTone, PlusOutlined } from "@ant-design/icons";
 import { ProTable } from "@ant-design/pro-components";
-import { Button } from "antd";
+import { Button, Space, Tooltip } from "antd";
 import { useRef, useState } from "react";
 import { getAccount } from "../../../services/AccountAPI";
-import ModalViewDetailAccount from "./ModalViewDetailAccount";
-import ModalUpdateAccount from "./ModalUpdateAccount";
+import ModalViewDetailAccount from "./viewDetail/ModalViewDetailAccount";
+import ModalUpdateAccount from "./updateAccount/ModalUpdateAccount";
 import PopDeleteAccount from "./PopDeleteAccount";
-import ModalCreateAccount from "./ModalCreateAccount";
+import ModalCreateAccount from "./createAccount/ModalCreateAccount";
 
-const UserTable = () => {
+const AccountTable = (props) => {
+  const { role, headerTitle } = props;
   const actionRef = useRef();
+
   const [openAccountDetail, setOpenAccountDetail] = useState(false);
   const [accountDataDetail, setAccountDataDetail] = useState(null);
   const [openAccountUpdate, setOpenAccountUpdate] = useState(false);
   const [openAccountCreate, setOpenAccountCreate] = useState(false);
 
-  const waitTimePromise = async (time = 20) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true);
-      }, time);
-    });
-  };
-
-  const waitTime = async (time = 20) => {
-    await waitTimePromise(time);
-  };
-
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      width: 50,
+      hideInSearch: true,
+      render: (dom, entity) => (
+        <a
+          onClick={() => {
+            setOpenAccountDetail(true);
+            setAccountDataDetail(entity);
+          }}
+        >
+          {entity.id}
+        </a>
+      ),
+    },
     {
       title: "USERNAME",
       dataIndex: "username",
       copyable: true,
       ellipsis: true,
-      // eslint-disable-next-line no-unused-vars
-      render(dom, entity, index, action, schema) {
-        return (
-          <a
-            onClick={() => {
-              setOpenAccountDetail(true);
-              setAccountDataDetail(entity);
-            }}
-            href="#"
-          >
-            {entity.username}
-          </a>
-        );
-      },
     },
     {
       title: "FULL NAME",
       dataIndex: ["profile", "fullname"],
-      filters: true,
-      onFilter: true,
       ellipsis: true,
     },
     {
-      title: "EMAIL",
+      title: "Email",
       dataIndex: "email",
       search: true,
       copyable: true,
@@ -85,31 +75,26 @@ const UserTable = () => {
     {
       title: "ACTION",
       hideInSearch: true,
-      // eslint-disable-next-line no-unused-vars
-      render(dom, entity, index, action, schema) {
-        return (
-          <>
+      width: 100,
+      render: (dom, entity) => (
+        <Space size="middle">
+          <Tooltip title="Edit">
             <EditTwoTone
               twoToneColor="#f57800"
-              style={{
-                cursor: "pointer",
-                marginRight: 15,
-                padding: "5px",
-                fontSize: "18px",
-              }}
+              style={{ cursor: "pointer", fontSize: "18px" }}
               className="hover:translate-y-[-5px] hover:top-[5px] transition-all"
               onClick={() => {
                 setOpenAccountUpdate(true);
                 setAccountDataDetail(entity);
               }}
             />
-            <PopDeleteAccount
-              accountDataDetail={entity}
-              refreshTable={refreshTable}
-            />
-          </>
-        );
-      },
+          </Tooltip>
+          <PopDeleteAccount
+            accountDataDetail={entity}
+            refreshTable={refreshTable}
+          />
+        </Space>
+      ),
     },
   ];
 
@@ -118,14 +103,14 @@ const UserTable = () => {
   };
 
   return (
-    <>
+    <div className="bg-white p-4 rounded-lg shadow-sm">
       <ProTable
         columns={columns}
         actionRef={actionRef}
         cardBordered
         // eslint-disable-next-line no-unused-vars
         request={async (params, sort, filter) => {
-          let query = "?role=ADMIN";
+          let query = `?role=${role}`;
           if (params?.email) {
             query += `&email=${params.email}`;
           }
@@ -143,32 +128,30 @@ const UserTable = () => {
           }
 
           const res = await getAccount(query);
-          await waitTime(80);
           return {
             data: res.data,
-            page: 1,
             success: true,
-            // "total": 30
           };
         }}
         rowKey="id"
         pagination={{
-          pageSize: 8,
-          onChange: (page) => console.log(page),
+          pageSize: 5,
+          showSizeChanger: false,
         }}
-        headerTitle="ADMIN ACCOUNTS"
+        headerTitle={headerTitle}
         toolBarRender={() => [
           <Button
             key="button"
             icon={<PlusOutlined />}
-            onClick={() => {
-              setOpenAccountCreate(true);
-            }}
+            onClick={() => setOpenAccountCreate(true)}
             type="primary"
           >
             Create
           </Button>,
         ]}
+        search={{
+          labelWidth: "auto",
+        }}
       />
 
       <ModalViewDetailAccount
@@ -189,10 +172,10 @@ const UserTable = () => {
         openAccountCreate={openAccountCreate}
         setOpenAccountCreate={setOpenAccountCreate}
         refreshTable={refreshTable}
-        role={"ADMIN"}
+        role={role}
       />
-    </>
+    </div>
   );
 };
 
-export default UserTable;
+export default AccountTable;

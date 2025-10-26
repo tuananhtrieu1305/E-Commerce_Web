@@ -1,22 +1,17 @@
 import { DeleteTwoTone } from "@ant-design/icons";
 import { message, Popconfirm, Tooltip } from "antd";
-import { deleteOrder } from "../../../services/OrderAPI";
+import { deleteProduct } from "../../../services/ProductAPI";
 
-const PopDeleteOrder = (props) => {
-  const { orderDataDetail, refreshTable } = props;
+const PopDeleteProduct = (props) => {
+  const { productDataDetail, refreshTable } = props;
   const [messageApi, contextHolder] = message.useMessage();
 
   const confirm = async () => {
-    const res = await deleteOrder(orderDataDetail.id);
+    const res = await deleteProduct(productDataDetail.id);
+
     if (res?.status === 200) {
-      messageApi.open({
-        type: "success",
-        content: res.message,
-        duration: 2,
-      });
-      setTimeout(() => {
-        refreshTable();
-      }, 1000);
+      messageApi.open({ type: "success", content: res.message });
+      refreshTable();
     } else {
       messageApi.open({
         type: "error",
@@ -25,18 +20,13 @@ const PopDeleteOrder = (props) => {
     }
   };
 
-  const cancel = () => {
-    messageApi.open({ type: "info", content: "Delete cancelled!" });
-  };
-
   return (
     <>
       {contextHolder}
       <Popconfirm
-        title={`Delete ${orderDataDetail.customer_name} Order`}
-        description="Are you sure to delete this order?"
+        title={`Delete "${productDataDetail.title}"?`}
+        description="Are you sure to delete this product?"
         onConfirm={confirm}
-        onCancel={cancel}
         okText="Yes"
         cancelText="No"
       >
@@ -51,4 +41,4 @@ const PopDeleteOrder = (props) => {
     </>
   );
 };
-export default PopDeleteOrder;
+export default PopDeleteProduct;

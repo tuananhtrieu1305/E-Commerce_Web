@@ -13,7 +13,7 @@ const ItemTab = (props) => {
         {orderDataDetail?.order_items.map((item) => {
           return (
             <div id={item.id} className="text-center p-[20px]">
-              <div className="border-2 border-black mx-auto p-[10px] text-2xl border-b-0 rounded-t-xl w-[700px]">
+              <div className="border-2 border-black mx-auto p-[10px] text-2xl border-b-0 rounded-t-xl w-[700px] bg-gray-800 text-white font-semibold">
                 {item.product_name}
               </div>
               <div className="border-2 border-black mx-auto rounded-b-xl w-[700px]">

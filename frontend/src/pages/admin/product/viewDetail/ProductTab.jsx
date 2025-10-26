@@ -1,5 +1,6 @@
 import { Descriptions } from "antd";
 import ImageProductTab from "./ImageProductTab";
+import formatVND from "../../../../helpers/ConvertMoney";
 
 const ProductTab = (props) => {
   const { productDataDetail } = props;
@@ -25,7 +26,7 @@ const ProductTab = (props) => {
     {
       key: "4",
       label: "Price",
-      children: productDataDetail?.price,
+      children: <span>{formatVND(productDataDetail?.price)}</span>,
     },
     {
       key: "5",
@@ -60,20 +61,10 @@ const ProductTab = (props) => {
     {
       key: "10",
       label: "Images",
-      children:
-        productDataDetail?.imagePaths &&
-        productDataDetail.imagePaths.length > 0 ? (
-          <ImageProductTab productDataDetail={productDataDetail} />
-        ) : (
-          "No Data"
-        ),
+      children: <ImageProductTab productDataDetail={productDataDetail} />,
     },
   ];
 
-  return (
-    <div className="border-2 rounded-2xl border-amber-100">
-      <Descriptions bordered items={items} />
-    </div>
-  );
+  return <Descriptions bordered items={items} />;
 };
 export default ProductTab;

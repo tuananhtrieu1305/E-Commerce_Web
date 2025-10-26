@@ -1,34 +1,100 @@
 import {
   AppstoreOutlined,
   ExceptionOutlined,
-  HeartTwoTone,
   TeamOutlined,
   UserOutlined,
   DollarCircleOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  LogoutOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Dropdown, Space, Avatar } from "antd";
-import { Outlet } from "react-router-dom";
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, memo } from "react";
 import Logo from "../../components/Logo";
 import Logo_Icon from "../../assets/logoPage/Logo_Icon.png";
 
-const { Content, Sider } = Layout;
+const { Content, Sider, Header: AntHeader } = Layout;
+
+const MemoizedHeader = memo(({ collapsed, onToggle }) => {
+  const dropdownItems = [
+    {
+      label: <Link to="/">Homepage</Link>,
+      key: "home",
+      icon: <HomeOutlined />,
+    },
+    { type: "divider" },
+    {
+      label: <span style={{ cursor: "pointer" }}>Log out</span>,
+      key: "logout",
+      icon: <LogoutOutlined />,
+      danger: true,
+    },
+  ];
+
+  const urlAvatar = ``;
+
+  return (
+    <AntHeader className="!p-0 flex items-center justify-between shadow-sm sticky top-0 z-10 ">
+      <div className="flex items-center">
+        {React.createElement(
+          collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+          {
+            className:
+              "trigger text-lg px-6 cursor-pointer h-full flex items-center !text-white",
+            onClick: onToggle,
+          }
+        )}
+      </div>
+      <div className="pr-6">
+        <Dropdown menu={{ items: dropdownItems }} trigger={["click"]}>
+          <Space className="cursor-pointer p-2 rounded-md">
+            <Avatar src={urlAvatar} />
+            <span className="font-medium text-gray-600">Admin</span>
+          </Space>
+        </Dropdown>
+      </div>
+    </AntHeader>
+  );
+});
+
+MemoizedHeader.displayName = "MemoizedHeader";
+
+const MemoizedContent = memo(() => {
+  return (
+    <Content className="m-4 p-6 bg-white rounded-lg shadow-inner">
+      <Outlet />
+    </Content>
+  );
+});
+MemoizedContent.displayName = "MemoizedContent";
 
 const AdminPage = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("dashboard");
+  const location = useLocation();
+  const [activeMenuKey, setActiveMenuKey] = useState("dashboard");
 
-  const items = [
+  useEffect(() => {
+    const path = location.pathname.split("/").pop();
+    const keyMap = {
+      admin: "dashboard",
+      users: "user",
+      admins: "admin",
+      products: "products",
+      orders: "orders",
+    };
+    setActiveMenuKey(keyMap[path] || "dashboard");
+  }, [location]);
+
+  const menuItems = [
     {
       label: <Link to="/admin">Dashboard</Link>,
       key: "dashboard",
       icon: <AppstoreOutlined />,
     },
     {
-      label: <span>Manage Accounts</span>,
+      label: <span>Account Management</span>,
       key: "account",
       icon: <UserOutlined />,
       children: [
@@ -45,95 +111,50 @@ const AdminPage = () => {
       ],
     },
     {
-      label: <Link to="/admin/products">Manage Products</Link>,
+      label: <Link to="/admin/products">Product Management</Link>,
       key: "products",
       icon: <ExceptionOutlined />,
     },
     {
-      label: <Link to="/admin/orders">Manage Orders</Link>,
+      label: <Link to="/admin/orders">Order Management</Link>,
       key: "orders",
       icon: <DollarCircleOutlined />,
     },
   ];
 
-  const itemsDropdown = [
-    {
-      label: <Link to={"/"}>Homepage</Link>,
-      key: "home",
-    },
-    {
-      label: <label style={{ cursor: "pointer" }}>Log out</label>,
-      key: "logout",
-    },
-  ];
-
-  const urlAvatar = ``;
+  const handleToggle = () => setCollapsed(!collapsed);
 
   return (
-    <>
-      <Layout style={{ minHeight: "100vh" }} className="layout-admin">
-        <Sider
-          theme="light"
-          collapsible
-          collapsed={collapsed}
-          onCollapse={(value) => setCollapsed(value)}
-        >
-          <div
-            style={{
-              height: 32,
-              margin: 16,
-              textAlign: "center",
-            }}
-          >
-            {collapsed ? (
-              <div className="pl-[7px]">
-                <img srcSet={`${Logo_Icon} 2x`} alt="" />
-              </div>
-            ) : (
-              <Logo />
-            )}
-          </div>
-          <Menu
-            defaultSelectedKeys={[activeMenu]}
-            mode="inline"
-            items={items}
-            onClick={(e) => setActiveMenu(e.key)}
-          />
-        </Sider>
-        <Layout>
-          <div
-            className="admin-header"
-            style={{
-              height: "50px",
-              borderBottom: "1px solid #ebebeb",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0 15px",
-            }}
-          >
-            <span>
-              {React.createElement(
-                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                {
-                  className: "trigger p-2.5",
-                  onClick: () => setCollapsed(!collapsed),
-                }
-              )}
-            </span>
-            <Dropdown menu={{ items: itemsDropdown }} trigger={["hover"]}>
-              <Space style={{ cursor: "pointer" }}>
-                <Avatar src={urlAvatar} />
-                admin
-              </Space>
-            </Dropdown>
-          </div>
-          <Content style={{ padding: "15px" }}>
-            <Outlet />
-          </Content>
-        </Layout>
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider
+        width={230}
+        trigger={null}
+        collapsedWidth={80}
+        collapsed={collapsed}
+        theme="dark"
+        className="shadow-sm transition-all duration-300 ease-in-out transform-gpu will-change-transform"
+      >
+        <div className="flex items-center justify-center h-16">
+          {collapsed ? (
+            <img src={Logo_Icon} alt="Icon" className="h-8" />
+          ) : (
+            <Logo theme={"dark"} />
+          )}
+        </div>
+        <Menu
+          theme="dark"
+          selectedKeys={[activeMenuKey]}
+          mode="inline"
+          items={menuItems}
+          onClick={(e) => setActiveMenuKey(e.key)}
+        />
+      </Sider>
+
+      <Layout className="!bg-gray-200 transition-all duration-300 ease-in-out">
+        <MemoizedHeader collapsed={collapsed} onToggle={handleToggle} />
+        <MemoizedContent />
       </Layout>
-    </>
+    </Layout>
   );
 };
 
