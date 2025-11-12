@@ -28,3 +28,9 @@
   font-weight: 800;
   font-style: normal;
 }
+
+:where(.css-dev-only-do-not-override-l9pxc0).ant-carousel .slick-prev,
+:where(.css-dev-only-do-not-override-l9pxc0).ant-carousel .slick-next {
+  color: black;
+  opacity: 0.6;
+}
