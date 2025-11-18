@@ -52,7 +52,7 @@ public class SecurityConfig {
         return source;
     }
 
-    // Bean này chịu trách nhiệm lấy UserDetails (từ DB) và mã hóa mật khẩu
+    // Lấy UserDetails (từ DB) và mã hóa mật khẩu
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -83,6 +83,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/seller/**").permitAll()
+                        .requestMatchers("/api/chatbot/**").permitAll()
 
                         // Tất cả các request còn lại đều phải được xác thực
                         .anyRequest().authenticated()
