@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback,useRef } from 'react';
 import { getCart, apiRemoveItem,apiAddItem ,apiSetQty} from '../services/cartService';
-
+import { getUserId } from '../utils/auth';
 // 1. Tạo Context
 const CartContext = createContext(null);
 
@@ -11,9 +11,8 @@ export function CartProvider({ children }) {
     const [error, setError] = useState(null);
     const debounceTimerRef = useRef(null);
 
-    // TODO: Lấy userId từ AuthContext của bạn
-    // Tạm thời dùng ID mặc định từ service
-    const userId = 1; 
+
+    const userId = getUserId() || 1;
 
     // Định dạng tiền tệ
     const formatCurrency = (amount) => {
@@ -29,39 +28,32 @@ export function CartProvider({ children }) {
             setItems(cartItems || []);
         } catch (err) {
             setError(err.message);
-            setItems([]); // Xóa item nếu có lỗi
+            setItems([]); 
         } finally {
             setLoading(false);
         }
-    }, [userId]); // Chỉ tạo lại hàm nếu userId thay đổi
+    }, [userId]); 
 
-    // Tải giỏ hàng lần đầu khi component được mount
     useEffect(() => {
         fetchCart();
     }, [fetchCart]);
 
-    // Hàm thay đổi số lượng
     const setItemQuantity = useCallback(
     (productId, newQty) => {
-      // 1. Hủy timer cũ nếu có
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
 
-      // 2. Hiển thị loading
       setLoading(true);
 
-      // 3. Cập nhật UI ngay lập tức (Optimistic Update)
       setItems((prevItems) =>
         prevItems.map((item) =>
           item.productId === productId ? { ...item, quantity: newQty } : item
         )
       );
 
-      // 4. Đặt timer mới (debounce)
       debounceTimerRef.current = setTimeout(async () => {
         try {
-          // 5. Gọi API PUT
           const updatedCart = await apiSetQty(
             userId,
             productId,
@@ -71,24 +63,22 @@ export function CartProvider({ children }) {
           if (updatedCart && updatedCart.items) {
             setItems(updatedCart.items);
           } else {
-            await fetchCart(); // Tải lại nếu API không trả về đúng
+            await fetchCart(); 
           }
         } catch (err) {
           message.error(err.message || "Lỗi cập nhật số lượng");
-          // Nếu lỗi, tải lại giỏ hàng để khôi phục
           await fetchCart();
         } finally {
           setLoading(false);
           debounceTimerRef.current = null;
         }
-      }, 250); // <-- Chờ 750ms
+      }, 750); 
     },
-    [userId, fetchCart] // Thêm fetchCart vào dependencies
+    [userId, fetchCart] 
   );
 
     // Hàm xóa item
     const removeItem = async (itemId) => {
-        // Thêm xác nhận
         if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
             return;
         }
@@ -96,9 +86,7 @@ export function CartProvider({ children }) {
         try {
             setLoading(true);
             setError(null);
-            // API (DELETE) không trả về gì (void)
             await apiRemoveItem(userId, itemId);
-            // Tải lại giỏ hàng sau khi xóa thành công
             await fetchCart();
         } catch (err) {
             setError(err.message);
@@ -107,7 +95,6 @@ export function CartProvider({ children }) {
         }
     };
 
-    // 3. Cung cấp state và các hàm cho component con
     const value = {
         items,
         setItems,
@@ -128,7 +115,6 @@ export function CartProvider({ children }) {
     );
 }
 
-// 4. Tạo custom Hook (để dễ sử dụng)
 export const useCart = () => {
     const context = useContext(CartContext);
     if (context === null) {

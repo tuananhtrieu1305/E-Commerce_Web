@@ -14,6 +14,9 @@ import enUS from "antd/es/calendar/locale/en_US.js";
 import { CartProvider } from "./context/CartContext.jsx";
 import { CheckoutProvider } from "./context/CheckoutContext.jsx";
 import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
+import PaymentReturnPage from "./pages/checkout/PaymentReturnPage.jsx";
+import OrderHistoryPage from './pages/client/OrderHistoryPage.jsx';
+import OrderDetailPage from './pages/client/OrderDetailPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -33,13 +36,28 @@ const router = createBrowserRouter([
         element: <AboutPage />,
       },
       {
-        path: "/cart", // <-- THÊM ROUTE NÀY
+        path: "/cart", 
         element: <CartPage />,
       },
       {
+        path: "/payment-result", 
+        element: <PaymentReturnPage  />,
+      },
+
+      {
+        path: "/profile/orders", 
+        element: <OrderHistoryPage  />,
+      },
+      {
+        path: "/order-detail/:id", 
+        element: <OrderDetailPage  />,
+      },
+    
+
+      {
         path: "/checkout",
         element: (
-          <CheckoutProvider> {/* BỌC Ở ĐÂY */}
+          <CheckoutProvider>
             <CheckoutPage />
           </CheckoutProvider>
         ),
@@ -56,13 +74,12 @@ const router = createBrowserRouter([
   },
 ]);
 
-// Cập nhật hàm render
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ConfigProvider locale={enUS}>
-      <CartProvider> {/* <-- BỌC Ở ĐÂY */}
+      <CartProvider> 
         <RouterProvider router={router} />
-      </CartProvider> {/* <-- BỌC Ở ĐÂY */}
+      </CartProvider> 
     </ConfigProvider>
   </StrictMode>
 );
