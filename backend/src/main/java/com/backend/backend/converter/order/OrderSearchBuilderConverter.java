@@ -36,6 +36,9 @@ public class OrderSearchBuilderConverter {
             List<Map<String, Object>> orderItems = (List<Map<String, Object>>) body.get("order_items");
             builder.setOrder_items(convertOrderItems(orderItems));
         }
+        if (body.containsKey("payment_method")) {
+            builder.setPaymentMethod(MapUtil.getObject(body, "payment_method", String.class));
+        }
 
         return builder.build();
     }

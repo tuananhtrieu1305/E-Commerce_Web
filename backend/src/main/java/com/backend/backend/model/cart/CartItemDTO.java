@@ -18,5 +18,6 @@ public class CartItemDTO {
     private BigDecimal unitPrice;
     private BigDecimal lineTotal;
     private String productTitle;
+    private String image;
    ;
 }

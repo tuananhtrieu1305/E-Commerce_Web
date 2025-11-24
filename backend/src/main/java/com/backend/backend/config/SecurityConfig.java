@@ -16,13 +16,11 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    // Password Encoded
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Định nghĩa cấu hình CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -36,7 +34,6 @@ public class SecurityConfig {
         return source;
     }
 
-    // Bật CORS + tắt CSRF + cho phép tất cả request (tạm thời)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

@@ -15,7 +15,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
@@ -64,6 +66,12 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                     where.append("AND o.").append(fieldName).append(" = ").append(value).append(" ");
                     continue;
                 }
+
+                if (fieldName.equals("customer_id")) {
+                    where.append("AND o.user_id = ").append(value).append(" ");
+                    continue;
+                }
+
                 if(fieldName.equals("address") || fieldName.equals("phone")) {
                     where.append("AND o.").append(fieldName).append(" LIKE '%").append(value).append("%' ");
                     continue;
@@ -174,8 +182,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
             if (product.getStock() < itemRequest.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getTitle());
-            }
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Sản phẩm " + product.getTitle() +" không đủ số lượng trong kho"
+                );            }
 
             product.setStock(product.getStock() - itemRequest.getQuantity());
             productRepository.save(product);

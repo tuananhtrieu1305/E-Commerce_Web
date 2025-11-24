@@ -20,7 +20,6 @@ public class OrderDTOConverter {
     public OrderDTO toOrderDTO(OrderEntity order) {
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
 
-        // Set user info
         if (order.getUser() != null) {
             orderDTO.setCustomer_id(order.getUser().getId());
             if (order.getUser().getAccount() != null) {
@@ -28,7 +27,6 @@ public class OrderDTOConverter {
             }
         }
 
-        // Convert order items
         if (order.getOrderItems() != null && !order.getOrderItems().isEmpty()) {
             List<OrderItemDTO> orderItemDTOs = order.getOrderItems().stream()
                     .map(this::convertToOrderItemDTO)

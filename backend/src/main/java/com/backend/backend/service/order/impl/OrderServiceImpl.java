@@ -7,18 +7,21 @@ import com.backend.backend.converter.order.OrderSearchBuilderConverter;
 import com.backend.backend.model.order.OrderDTO;
 import com.backend.backend.repository.account.UserRepository;
 import com.backend.backend.repository.account.entity.UserEntity;
+import com.backend.backend.repository.cart.CartRepository;
 import com.backend.backend.repository.order.OrderItemRepository;
 import com.backend.backend.repository.order.OrderRepository;
 import com.backend.backend.repository.order.entity.OrderEntity;
 import com.backend.backend.repository.order.entity.OrderItemEntity;
+import com.backend.backend.repository.payment.PaymentRepository;
+import com.backend.backend.repository.payment.entity.PaymentEntity;
 import com.backend.backend.repository.product.ProductRepository;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import com.backend.backend.service.order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,6 +47,13 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+
     @Override
     public List<OrderDTO> getOrder(Map<String, Object> params) {
         OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.paramsToBuilder(params);
@@ -53,10 +63,33 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public OrderDTO createOrder(Map<String, Object> body) {
+
         OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.bodyToBuilder(body);
-        OrderDTO res = orderDTOConverter.toOrderDTO(orderRepository.createOrder(orderSearchBuilder));
-        return res;
+        OrderEntity savedOrder = orderRepository.createOrder(orderSearchBuilder);
+
+        PaymentEntity payment = new PaymentEntity();
+        payment.setOrder(savedOrder);
+        String method = orderSearchBuilder.getPaymentMethod();
+        if (method == null) method = "COD";
+
+        if (method.equalsIgnoreCase("BANK")) {
+            payment.setMethod("BANK");
+            payment.setStatus("PENDING_PAYMENT");
+        } else {
+            payment.setMethod("COD");
+            payment.setStatus("PENDING");
+        }
+        payment.setPaid_at(null);
+
+        savedOrder.setPayment(payment);
+
+        orderRepository.save(savedOrder);
+
+        return orderDTOConverter.toOrderDTO(savedOrder);
     }
+
+
+
 
     @Transactional
     @Override

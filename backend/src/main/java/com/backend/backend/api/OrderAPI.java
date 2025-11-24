@@ -18,6 +18,15 @@ public class OrderAPI {
         List<OrderDTO> res = orderService.getOrder(params);
         return res;
     }
+    @GetMapping(value = "/api/order/history/{userId}")
+    public List<OrderDTO> getOrderHistory(@PathVariable Integer userId,
+                                          @RequestParam(required = false) Map<String, Object> params) {
+        params.put("customer_id", userId);
+        List<OrderDTO> res = orderService.getOrder(params);
+        return res;
+    }
+
+
 
     @PostMapping(value = "/api/order/")
     public OrderDTO createOrder(@RequestBody Map<String, Object> body) {

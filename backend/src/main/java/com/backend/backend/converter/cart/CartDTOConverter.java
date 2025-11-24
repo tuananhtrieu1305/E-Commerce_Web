@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class CartDTOConverter {
 
     private final CartItemDTOConverter itemConv;
-    private final ProductRepository productRepo; // <- thêm repo
+    private final ProductRepository productRepo;
 
     public CartDTO toDTO(Cart cart) {
         if (cart == null) return null;
@@ -33,29 +33,25 @@ public class CartDTOConverter {
 
         List<CartItem> items = (cart.getItems() != null) ? cart.getItems() : Collections.emptyList();
 
-        // 1) Gom productId
         Set<Integer> pids = new HashSet<>();
         for (CartItem it : items) {
             if (it != null && it.getProductId() != null) pids.add(it.getProductId());
         }
 
-        // 2) Tải products một lần
         List<ProductEntity> products = pids.isEmpty() ? Collections.emptyList() : productRepo.findAllById(pids);
 
-        // 3) Map id -> title
         Map<Integer, String> idToTitle = new HashMap<>();
         for (ProductEntity p : products) {
-            if (p != null) idToTitle.put(p.getId(), p.getTitle()); // hoặc p.getName()
+            if (p != null) idToTitle.put(p.getId(), p.getTitle());
         }
 
-        // 4) Convert từng item và gán productTitle
         for (CartItem it : items) {
             if (it == null) continue;
             CartItemDTO ci = itemConv.toDTO(it);
 
             Integer pid = it.getProductId();
             String title = (pid != null) ? idToTitle.get(pid) : null;
-            if (title == null && pid != null) title = "Sản phẩm ID: " + pid; // fallback đơn giản
+            if (title == null && pid != null) title = "Sản phẩm ID: " + pid;
 
             ci.setProductTitle(title);
             itemDTOs.add(ci);
