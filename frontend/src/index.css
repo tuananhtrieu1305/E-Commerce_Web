@@ -34,3 +34,19 @@
   color: black;
   opacity: 0.6;
 }
+/* Ẩn scrollbar nhưng vẫn scroll được */
+
+/* Chrome, Safari, Edge */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* IE, Edge cũ */
+.no-scrollbar {
+  -ms-overflow-style: none;
+}

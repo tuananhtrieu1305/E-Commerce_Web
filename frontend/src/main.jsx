@@ -17,7 +17,8 @@ import ManageProducts from "./pages/admin/ManageProducts.jsx";
 import { ConfigProvider } from "antd";
 import enUS from "antd/locale/en_US";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-
+import ProductsPage from "./pages/client/ProductsPage.jsx";
+import ProductDetailPage from "./pages/client/ProductDetailPage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />,
+      },
+      {
+        path: "/products",
+        element: <ProductsPage />,
+      },
+      {
+        path: "/products/:id",
+        element: <ProductDetailPage />,
       },
     ],
   },

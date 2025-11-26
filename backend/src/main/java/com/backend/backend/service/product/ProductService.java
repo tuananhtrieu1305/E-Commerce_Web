@@ -1,9 +1,9 @@
 package com.backend.backend.service.product;
 
-import com.backend.backend.model.product.ProductDTO;
-
 import java.util.List;
 import java.util.Map;
+
+import com.backend.backend.model.product.ProductDTO;
 
 public interface ProductService {
     List<ProductDTO> getProduct(Map<String, Object> params);
@@ -12,4 +12,6 @@ public interface ProductService {
     void deleteProduct(Integer id);
     List<ProductDTO> createListProducts(List<Map<String, Object>> bodyList);
     List<ProductDTO> searchProductsForChatbot(Map<String, Object> aiParams);
+    List<ProductDTO> getTopBestSellerProducts(int limit) ;
+    List<ProductDTO> getTopRatedProducts(int limit);
 }

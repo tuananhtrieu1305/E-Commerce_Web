@@ -1,6 +1,7 @@
 package com.backend.backend.config;
 
-import com.backend.backend.utils.JwtAuthFilter;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import com.backend.backend.utils.JwtAuthFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -84,9 +85,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/seller/**").permitAll()
                         .requestMatchers("/api/chatbot/**").permitAll()
-
+                        .requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html"
+                        ).permitAll()
+                        .requestMatchers("/api/comments/**").permitAll()
+        
+                    
                         // Tất cả các request còn lại đều phải được xác thực
                         .anyRequest().authenticated()
+
                 )
 
                 // Cấu hình quản lý session: Không tạo session, dùng JWT (STATELESS)

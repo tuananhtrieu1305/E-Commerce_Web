@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import ChatbotFloat from "./components/chatbot/ChatbotFloat";
+import Home from "./pages/client/HomePage";
 
 const App = () => {
   return (
     <>
-      <h1 class="text-3xl font-bold underline">Hello world!</h1>
       <Outlet />
       <ChatbotFloat />
     </>

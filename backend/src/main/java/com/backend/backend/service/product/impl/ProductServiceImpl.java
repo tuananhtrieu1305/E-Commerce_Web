@@ -1,5 +1,16 @@
 package com.backend.backend.service.product.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.backend.backend.builder.product.ProductSearchBuilder;
 import com.backend.backend.converter.product.ProductDTOConverter;
 import com.backend.backend.converter.product.ProductSearchBuilderConverter;
@@ -18,16 +29,6 @@ import com.backend.backend.service.product.ProductService;
 import com.backend.backend.utils.ImageUtil;
 import com.backend.backend.utils.exception.DuplicateRecordException;
 import com.backend.backend.utils.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -309,4 +310,90 @@ public class ProductServiceImpl implements ProductService {
         }
         return resultDTOs;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getTopBestSellerProducts(int limit) {
+        if (limit <= 0) {
+            limit = 10; // default nếu FE không truyền hoặc truyền bậy
+        }
+
+        // 1. Lấy list productId đã sort theo số user mua giảm dần
+        List<com.backend.backend.model.product.BestSellerIdOnly> bestIds =
+                productRepository.findBestSellerIds();
+
+        // 2. Cắt top N id
+        List<Integer> ids = bestIds.stream()
+                .map(com.backend.backend.model.product.BestSellerIdOnly::getProductId)
+                .limit(limit)
+                .toList();
+
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 3. Lấy full ProductEntity theo id
+        List<ProductEntity> entities = productRepository.findAllById(ids);
+
+        // 4. Đưa về map để giữ đúng thứ tự best-seller
+        Map<Integer, ProductDTO> dtoMap = new java.util.HashMap<>();
+        for (ProductEntity entity : entities) {
+            dtoMap.put(entity.getId(), productDTOConverter.toProductDTO(entity));
+        }
+
+        // 5. Trả list DTO theo đúng thứ tự ids (bán chạy nhất → ít hơn)
+        List<ProductDTO> result = new ArrayList<>();
+        for (Integer id : ids) {
+            ProductDTO dto = dtoMap.get(id);
+            if (dto != null) {
+                result.add(dto);
+            }
+        }
+
+        return result;
+    }
+
+        @Override
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getTopRatedProducts(int limit) {
+        if (limit <= 0) {
+            limit = 10; // default
+        }
+
+        // 1. Lấy danh sách productId đã sort theo avg star giảm dần
+        List<com.backend.backend.model.product.BestRatedIdOnly> bestIds =
+                productRepository.findBestRatedIds();
+
+        // 2. Cắt top N id
+        List<Integer> ids = bestIds.stream()
+                .map(com.backend.backend.model.product.BestRatedIdOnly::getProductId)
+                .limit(limit)
+                .toList();
+
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 3. Lấy full ProductEntity theo id
+        List<ProductEntity> entities = productRepository.findAllById(ids);
+
+        // 4. Đưa vào map để khôi phục đúng thứ tự theo ids
+        java.util.Map<Integer, ProductDTO> dtoMap = new java.util.HashMap<>();
+        for (ProductEntity entity : entities) {
+            dtoMap.put(entity.getId(), productDTOConverter.toProductDTO(entity));
+        }
+
+        // 5. Trả kết quả theo đúng thứ tự top-rated
+        List<ProductDTO> result = new ArrayList<>();
+        for (Integer id : ids) {
+            ProductDTO dto = dtoMap.get(id);
+            if (dto != null) {
+                result.add(dto);
+            }
+        }
+
+        return result;
+    }
+
+
 }
