@@ -16,6 +16,10 @@ import ManageOrders from "./pages/admin/ManageOrders.jsx";
 import ManageProducts from "./pages/admin/ManageProducts.jsx";
 import { ConfigProvider } from "antd";
 import enUS from "antd/locale/en_US";
+<<<<<<< HEAD
+=======
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+>>>>>>> feature/auth
 
 const router = createBrowserRouter([
   {
@@ -45,6 +49,7 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
+<<<<<<< HEAD
     path: "/admin",
     element: <AdminPage />,
     children: [
@@ -67,6 +72,35 @@ const router = createBrowserRouter([
       {
         path: "/admin/products",
         element: <ManageProducts />,
+=======
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/admin",
+        element: <AdminPage />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
+          {
+            path: "/admin/users",
+            element: <ManageUsers />,
+          },
+          {
+            path: "/admin/admins",
+            element: <ManageAdmins />,
+          },
+          {
+            path: "/admin/orders",
+            element: <ManageOrders />,
+          },
+          {
+            path: "/admin/products",
+            element: <ManageProducts />,
+          },
+        ],
+>>>>>>> feature/auth
       },
     ],
   },

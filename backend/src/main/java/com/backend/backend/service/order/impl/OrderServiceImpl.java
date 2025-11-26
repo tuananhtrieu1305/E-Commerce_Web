@@ -12,6 +12,8 @@ import com.backend.backend.repository.order.OrderRepository;
 import com.backend.backend.repository.order.entity.OrderEntity;
 import com.backend.backend.repository.order.entity.OrderItemEntity;
 import com.backend.backend.repository.order.specification.OrderSpecification;
+import com.backend.backend.repository.payment.PaymentRepository;
+import com.backend.backend.repository.payment.entity.PaymentEntity;
 import com.backend.backend.repository.product.ProductRepository;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import com.backend.backend.service.order.OrderService;
@@ -45,6 +47,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Override
     public List<OrderDTO> getOrder(Map<String, Object> params) {
@@ -151,6 +156,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotal_cost(totalCost);
 
+        updatePaymentDetails(order, body);
+
         OrderEntity updatedOrder = orderRepository.save(order);
 
         return orderDTOConverter.toOrderDTO(updatedOrder);
@@ -170,5 +177,32 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderRepository.delete(order);
+    }
+
+    private void updatePaymentDetails(OrderEntity order, Map<String, Object> body) {
+        if (!body.containsKey("payment_status") && !body.containsKey("payment_method")) {
+            return;
+        }
+
+        PaymentEntity payment = order.getPayment();
+
+        if (payment == null) {
+            payment = new PaymentEntity();
+            payment.setOrder(order);
+            order.setPayment(payment);
+        }
+
+        boolean paymentUpdated = false;
+        if (body.containsKey("payment_status")) {
+            payment.setStatus((String) body.get("payment_status"));
+            paymentUpdated = true;
+        }
+        if (body.containsKey("payment_method")) {
+            payment.setMethod((String) body.get("payment_method"));
+            paymentUpdated = true;
+        }
+        if (paymentUpdated) {
+            payment.setPaid_at(LocalDateTime.now());
+        }
     }
 }

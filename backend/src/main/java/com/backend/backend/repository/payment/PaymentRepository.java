@@ -1,4 +1,7 @@
 package com.backend.backend.repository.payment;
 
-public interface PaymentRepository {
+import com.backend.backend.repository.payment.entity.PaymentEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer> {
 }

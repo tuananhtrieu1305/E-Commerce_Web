@@ -15,4 +15,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
 
     @Query(value = "SELECT * FROM accounts a WHERE a.email = :email LIMIT 1", nativeQuery = true)
     Optional<AccountEntity> findByEmailIncludeDeleted(@Param("email") String email);
+
+    Optional<AccountEntity> findByUsernameAndDeletedFalse(String username);
 }

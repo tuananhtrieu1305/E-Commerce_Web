@@ -7,6 +7,7 @@ import com.backend.backend.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class AccountAPI {
     private AccountService accountService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<List<AccountDTO>>> getAccount(@RequestParam Map<String, Object> params) {
         List<AccountDTO> accounts = accountService.getAccount(params);
         return ResponseEntity.ok(ApiResponse.success(accounts, "Get accounts succeeded!"));
@@ -33,6 +35,7 @@ public class AccountAPI {
     }
 
     @PostMapping("/batch")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<List<AccountDTO>>> createListAccounts(@RequestBody List<Map<String, Object>> bodyList) {
         List<AccountDTO> newAccounts = accountService.createListAccounts(bodyList);
         ApiResponse<List<AccountDTO>> response = ApiResponse.success(newAccounts, "Create accounts succeeded!");

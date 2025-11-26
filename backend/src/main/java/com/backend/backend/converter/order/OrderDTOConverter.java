@@ -38,8 +38,10 @@ public class OrderDTOConverter {
 
         if (order.getPayment() != null) {
             orderDTO.setPayment_status(order.getPayment().getStatus());
+            orderDTO.setPayment_method(order.getPayment().getMethod());
         } else {
             orderDTO.setPayment_status("PENDING");
+            orderDTO.setPayment_method(null);
         }
 
         return orderDTO;

@@ -129,11 +129,11 @@ public class AccountServiceImpl implements AccountService {
 
         AccountEntity saved = accountRepository.save(entity);
 
-        if ("USER".equals(saved.getRole())) {
+        if ("USER".equalsIgnoreCase(saved.getRole())) {
             UserEntity user = new UserEntity();
             user.setAccount(saved);
             userRepository.save(user);
-        } else if ("ADMIN".equals(saved.getRole())) {
+        } else if ("ADMIN".equalsIgnoreCase(saved.getRole())) {
             AdminEntity admin = new AdminEntity();
             admin.setAccount(saved);
             adminRepository.save(admin);
