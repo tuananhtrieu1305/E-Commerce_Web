@@ -84,7 +84,7 @@ public class ChatbotService {
 
         int finalPrice = (int) number; // Chuyển về số nguyên
 
-        // 3. Xử lý logic khoảng (ĐÃ SỬA LỖI)
+        // 3. Xử lý logic khoảng
         if (query.contains("dưới") || query.contains("tối đa") || query.contains("không quá")) {
             // "dưới 600k" -> {"maxPrice": 600000}
             priceRange.put("maxPrice", finalPrice);
@@ -96,7 +96,6 @@ public class ChatbotService {
             priceRange.put("maxPrice", (int) (finalPrice * 1.2)); // +20%
         } else {
             // Trường hợp "giá 550000" (không có từ "khoảng")
-            // CŨNG cho một khoảng giá rộng, ví dụ +/- 10%
             priceRange.put("minPrice", (int) (finalPrice * 0.9)); // -10%
             priceRange.put("maxPrice", (int) (finalPrice * 1.1)); // +10%
         }

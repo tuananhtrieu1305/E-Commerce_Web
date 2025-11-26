@@ -6,21 +6,15 @@ import {
   List,
   Avatar,
   Spin,
-  Empty,
   Typography,
   message,
 } from "antd";
-import {
-  CommentOutlined,
-  CloseOutlined,
-  SendOutlined,
-  RobotOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { CommentOutlined, SendOutlined, UserOutlined } from "@ant-design/icons";
 import { queryChatbot } from "../../services/ChatbotAPI";
 import formatVND from "../../helpers/ConvertMoney";
 import ChatBotLogo from "../../assets/chatbot/Logo.png";
 import CloseIcon from "../../assets/chatbot/close_icon.svg";
+import Anonymous from "../../assets/profilePics/Anonymous.png";
 
 const { Text } = Typography;
 
@@ -31,7 +25,7 @@ const ChatbotFloat = () => {
       id: "init",
       sender: "bot",
       type: "text",
-      content: "Hi! How can I help you find a product today?",
+      content: "Xin chào! Tôi có thể giúp gì cho bạn?",
     },
   ]);
   const [loading, setLoading] = useState(false);
@@ -40,10 +34,11 @@ const ChatbotFloat = () => {
 
   // Tự động cuộn xuống cuối khi có tin nhắn mới
   useEffect(() => {
-    if (messageListRef.current) {
+    if (isOpen && messageListRef.current) {
+      // Add check for isOpen
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isOpen]); // Depend on isOpen too
 
   const handleSend = async (query) => {
     const trimmedQuery = query.trim();
@@ -61,7 +56,7 @@ const ChatbotFloat = () => {
     setInputValue("");
 
     try {
-      const res = await queryChatbot(query);
+      const res = await queryChatbot(trimmedQuery); // Use trimmedQuery
       console.log(res);
 
       // 3. Thêm tin nhắn text của bot
@@ -151,9 +146,23 @@ const ChatbotFloat = () => {
               itemLayout="horizontal"
               dataSource={msg.content} // msg.content là mảng [product1, product2]
               renderItem={(product) => (
-                <List.Item>
+                <List.Item className="cursor-pointer">
                   <List.Item.Meta
-                    // Avatar={...} (Nếu có ảnh)
+                    avatar={
+                      <Avatar
+                        shape="square"
+                        size={50}
+                        src={
+                          product.imagePaths !== null &&
+                          product.imagePaths.length > 0
+                            ? `${import.meta.env.VITE_BACKEND_URL}${
+                                product.imagePaths[0].image_path ||
+                                product.imagePaths[0]
+                              }`
+                            : Anonymous
+                        }
+                      />
+                    }
                     title={<Text strong>{product.title}</Text>}
                     description={
                       <span className="text-green-600 font-semibold">
@@ -174,74 +183,79 @@ const ChatbotFloat = () => {
 
   return (
     <>
-      {/* Khung chat (chỉ hiện khi isOpen) */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50">
-          <Card
-            title={
-              <div className="py-4 flex items-center justify-start gap-3">
-                <figure className="w-[40px]">
+      <div
+        className={`fixed bottom-24 right-6 z-50 transition-all duration-300 ease-in-out transform origin-bottom-right
+          ${
+            isOpen
+              ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 scale-90 translate-y-10 pointer-events-none"
+          }
+        `}
+      >
+        <Card
+          title={
+            <div className="py-4 flex items-center justify-start gap-3">
+              <figure className="w-[40px]">
+                <img srcSet={`${ChatBotLogo} 2x`} alt="Chatbot Logo" />
+              </figure>
+              <div className="flex flex-col">
+                <span className="text-[18px]">AI Assistant</span>
+                <span className="text-[12px] text-[#43EE7D]">🟢 Online</span>
+              </div>
+            </div>
+          }
+          className="w-96 shadow-xl"
+          headStyle={{ backgroundColor: "#4361EE", color: "white" }}
+          bodyStyle={{
+            padding: 0,
+            height: "500px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+          extra={
+            <figure>
+              <img
+                src={CloseIcon}
+                alt="Close"
+                className="w-6 h-6 cursor-pointer"
+                onClick={() => setIsOpen(false)}
+              />
+            </figure>
+          }
+        >
+          {/* Lịch sử tin nhắn */}
+          <div
+            ref={messageListRef}
+            className="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-3"
+          >
+            {messages.map(renderMessage)}
+            {loading && (
+              <div className="flex justify-start mb-3 items-center gap-1.5">
+                <figure className="w-[40px] bg-[#4361EE] rounded-full p-2">
                   <img srcSet={`${ChatBotLogo} 2x`} alt="Chatbot Logo" />
                 </figure>
-                <div className="flex flex-col">
-                  <span className="text-[18px]">AI Assistant</span>
-                  <span className="text-[12px] text-[#43EE7D]">🟢 Online</span>
+                <div className="bg-gray-200 rounded-lg flex items-center justify-center py-2 px-4">
+                  <Spin size="small" />
                 </div>
               </div>
-            }
-            className="w-96 shadow-xl"
-            headStyle={{ backgroundColor: "#4361EE", color: "white" }}
-            bodyStyle={{
-              padding: 0,
-              height: "500px",
-              display: "flex",
-              flexDirection: "column",
-            }}
-            extra={
-              <figure>
-                <img
-                  src={CloseIcon}
-                  alt="Close"
-                  className="w-6 h-6 cursor-pointer"
-                  onClick={() => setIsOpen(false)}
-                />
-              </figure>
-            }
-          >
-            {/* Lịch sử tin nhắn */}
-            <div
-              ref={messageListRef}
-              className="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-3"
-            >
-              {messages.map(renderMessage)}
-              {loading && (
-                <div className="flex justify-start mb-3 items-center gap-1.5">
-                  <figure className="w-[40px] bg-[#4361EE] rounded-full p-2">
-                    <img srcSet={`${ChatBotLogo} 2x`} alt="Chatbot Logo" />
-                  </figure>
-                  <div className="bg-gray-200 rounded-lg flex items-center justify-center py-2 px-4">
-                    <Spin size="small" />
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
+          </div>
 
-            {/* Khung nhập liệu */}
-            <div className="p-4 bg-white border-t">
-              <Input.Search
-                placeholder="Ask about a product..."
-                enterButton={<SendOutlined />}
-                size="large"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onSearch={handleSend}
-                loading={loading}
-                disabled={loading}
-              />
-            </div>
-          </Card>
-        </div>
-      )}
+          {/* Khung nhập liệu */}
+          <div className="p-4 bg-white border-t">
+            <Input.Search
+              placeholder="Ask about a product..."
+              enterButton={<SendOutlined />}
+              size="large"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onSearch={handleSend}
+              loading={loading}
+              disabled={loading}
+            />
+          </div>
+        </Card>
+      </div>
 
       {/* Nút bấm nổi */}
       <FloatButton

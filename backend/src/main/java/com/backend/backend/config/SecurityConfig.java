@@ -92,10 +92,8 @@ public class SecurityConfig {
                 // Cấu hình quản lý session: Không tạo session, dùng JWT (STATELESS)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Thêm AuthenticationProvider đã tạo
                 .authenticationProvider(authenticationProvider())
 
-                // Thêm Filter JWT của bạn vào TRƯỚC filter UsernamePassword
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
 

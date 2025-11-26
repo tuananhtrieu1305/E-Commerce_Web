@@ -39,7 +39,6 @@ public class ChatbotProductSpecification {
                 Predicate infoMatch = cb.like(root.get("product_info"), "%" + keywords + "%");
                 Predicate categoryMatch = cb.like(root.join("category", JoinType.LEFT).get("cate_name"), "%" + keywords + "%");
 
-                // Thêm khối (title OR product_info OR categoryName)
                 mainPredicates.add(cb.or(titleMatch, infoMatch, categoryMatch));
             }
 
