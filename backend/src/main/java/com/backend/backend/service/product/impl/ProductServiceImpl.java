@@ -12,6 +12,7 @@ import com.backend.backend.repository.product.SellerRepository;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import com.backend.backend.repository.product.entity.ProductImageEntity;
 import com.backend.backend.repository.product.entity.SellerEntity;
+import com.backend.backend.repository.product.specification.ChatbotProductSpecification;
 import com.backend.backend.repository.product.specification.ProductSpecification;
 import com.backend.backend.service.product.ProductService;
 import com.backend.backend.utils.ImageUtil;
@@ -293,5 +294,19 @@ public class ProductServiceImpl implements ProductService {
             throw new ResourceNotFoundException("Product not found with ID: " + id);
         }
         productRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDTO> searchProductsForChatbot(Map<String, Object> aiParams) {
+        Specification<ProductEntity> spec = ChatbotProductSpecification.findByAiCriteria(aiParams);
+
+        List<ProductEntity> entities = productRepository.findAll(spec);
+
+        List<ProductDTO> resultDTOs = new ArrayList<>();
+        for (ProductEntity entity : entities) {
+            resultDTOs.add(productDTOConverter.toProductDTO(entity));
+        }
+        return resultDTOs;
     }
 }

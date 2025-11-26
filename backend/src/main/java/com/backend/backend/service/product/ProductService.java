@@ -11,4 +11,5 @@ public interface ProductService {
     ProductDTO updateProduct(Integer id, Map<String, Object> body);
     void deleteProduct(Integer id);
     List<ProductDTO> createListProducts(List<Map<String, Object>> bodyList);
+    List<ProductDTO> searchProductsForChatbot(Map<String, Object> aiParams);
 }
