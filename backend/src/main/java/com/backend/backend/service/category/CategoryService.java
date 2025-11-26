@@ -1,9 +1,9 @@
 package com.backend.backend.service.category;
 
+import java.util.List;
+
 import com.backend.backend.model.category.CategoryProductResponseDTO;
 import com.backend.backend.model.product.CategoryDTO;
-
-import java.util.List;
 
 public interface CategoryService {
     public List<CategoryProductResponseDTO> getCategoriesWithProducts();

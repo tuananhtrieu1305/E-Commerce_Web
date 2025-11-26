@@ -1,6 +1,7 @@
 package com.backend.backend.config;
 
-import com.backend.backend.utils.JwtAuthFilter;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import com.backend.backend.utils.JwtAuthFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -32,13 +33,11 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    // Password Encoded
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Định nghĩa cấu hình CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

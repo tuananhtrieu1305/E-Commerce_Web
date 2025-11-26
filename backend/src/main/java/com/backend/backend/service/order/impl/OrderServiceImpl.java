@@ -1,5 +1,15 @@
 package com.backend.backend.service.order.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.backend.backend.builder.order.OrderItemSearchBuilder;
 import com.backend.backend.builder.order.OrderSearchBuilder;
 import com.backend.backend.converter.order.OrderDTOConverter;
@@ -7,6 +17,7 @@ import com.backend.backend.converter.order.OrderSearchBuilderConverter;
 import com.backend.backend.model.order.OrderDTO;
 import com.backend.backend.repository.account.UserRepository;
 import com.backend.backend.repository.account.entity.UserEntity;
+import com.backend.backend.repository.cart.CartRepository;
 import com.backend.backend.repository.order.OrderItemRepository;
 import com.backend.backend.repository.order.OrderRepository;
 import com.backend.backend.repository.order.entity.OrderEntity;
@@ -18,15 +29,6 @@ import com.backend.backend.repository.product.ProductRepository;
 import com.backend.backend.repository.product.entity.ProductEntity;
 import com.backend.backend.service.order.OrderService;
 import com.backend.backend.utils.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -51,13 +53,16 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Autowired
+    private CartRepository cartRepository;
+
     @Override
     public List<OrderDTO> getOrder(Map<String, Object> params) {
         OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.paramsToBuilder(params);
         Specification<OrderEntity> spec = OrderSpecification.findByCriteria(orderSearchBuilder);
         List<OrderEntity> entities = orderRepository.findAll(spec);
-        return orderDTOConverter.toOrderDTOList(entities);
-    }
+        return orderDTOConverter.toOrderDTOList(entities);}
+   
 
     @Transactional
     @Override
@@ -102,6 +107,21 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderItems(orderItems);
         order.setTotal_cost(totalCost);
+        PaymentEntity payment = new PaymentEntity();
+        payment.setOrder(order);
+        String method = builder.getPaymentMethod();
+        if (method == null) method = "COD";
+
+        if (method.equalsIgnoreCase("BANK")) {
+            payment.setMethod("BANK");
+            payment.setStatus("PENDING_PAYMENT");
+        } else {
+            payment.setMethod("COD");
+            payment.setStatus("PENDING");
+        }
+        payment.setPaid_at(null);
+
+        order.setPayment(payment);
 
         OrderEntity savedOrder = orderRepository.save(order);
 

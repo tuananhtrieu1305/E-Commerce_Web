@@ -1,15 +1,24 @@
 package com.backend.backend.api;
 
-import com.backend.backend.model.order.OrderDTO;
-import com.backend.backend.model.response.ApiResponse;
-import com.backend.backend.service.order.OrderService;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.backend.backend.model.order.OrderDTO;
+import com.backend.backend.model.response.ApiResponse;
+import com.backend.backend.service.order.OrderService;
 
 @RestController
 @RequestMapping("/api/order")
@@ -41,5 +50,12 @@ public class OrderAPI {
         orderService.deleteOrder(id);
         return ResponseEntity.ok(ApiResponse.success("Delete order succeeded!"));
     }
-
+    
+    @GetMapping("/history/{userId}")
+    public List<OrderDTO> getOrderHistory(@PathVariable Integer userId,
+                                          @RequestParam(required = false) Map<String, Object> params) {
+        params.put("customer_id", userId);
+        List<OrderDTO> res = orderService.getOrder(params);
+        return res;
+    }
 }

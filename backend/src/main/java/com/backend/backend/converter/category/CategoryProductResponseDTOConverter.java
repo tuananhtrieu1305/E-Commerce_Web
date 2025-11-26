@@ -1,14 +1,14 @@
 package com.backend.backend.converter.category;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.backend.backend.model.category.CategoryProductResponseDTO;
 import com.backend.backend.model.category.ProductSummaryDTO;
 import com.backend.backend.repository.category.entity.CategoryEntity;
 import com.backend.backend.repository.product.entity.ProductEntity;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CategoryProductResponseDTOConverter {

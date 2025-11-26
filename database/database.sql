@@ -63,9 +63,11 @@ CREATE TABLE `admins` (
   `fullname` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `image` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `account_id` (`account_id`),
   CONSTRAINT `admins_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -184,6 +186,7 @@ CREATE TABLE `orders` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT '0',
+  `deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
@@ -244,7 +247,7 @@ CREATE TABLE `product_images` (
   PRIMARY KEY (`id`),
   KEY `prod_id` (`prod_id`),
   CONSTRAINT `product_images_ibfk_1` FOREIGN KEY (`prod_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -253,6 +256,7 @@ CREATE TABLE `product_images` (
 
 LOCK TABLES `product_images` WRITE;
 /*!40000 ALTER TABLE `product_images` DISABLE KEYS */;
+INSERT INTO `product_images` VALUES (1,11,'test1'),(2,11,'test2'),(3,12,'test1'),(4,12,'test2');
 /*!40000 ALTER TABLE `product_images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,6 +276,8 @@ CREATE TABLE `products` (
   `price` int NOT NULL,
   `stock` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted` tinyint(1) DEFAULT '0',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -329,6 +335,7 @@ CREATE TABLE `users` (
   `account_id` int DEFAULT NULL,
   `fullname` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `image` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `account_id` (`account_id`),

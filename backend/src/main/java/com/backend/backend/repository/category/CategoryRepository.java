@@ -1,12 +1,13 @@
 package com.backend.backend.repository.category;
 
-import com.backend.backend.model.product.CategoryDTO;
-import com.backend.backend.repository.category.entity.CategoryEntity;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import com.backend.backend.model.product.CategoryDTO;
+import com.backend.backend.repository.category.entity.CategoryEntity;
 
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Integer> {
     @Query("SELECT COUNT(c) > 0 FROM CategoryEntity c WHERE c.cate_name = :cateName")

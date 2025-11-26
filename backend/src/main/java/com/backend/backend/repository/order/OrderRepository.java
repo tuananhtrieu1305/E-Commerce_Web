@@ -1,14 +1,15 @@
 package com.backend.backend.repository.order;
 
-import com.backend.backend.model.order.OrderStatsDTO;
-import com.backend.backend.repository.order.entity.OrderEntity;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Set;
+import com.backend.backend.model.order.OrderStatsDTO;
+import com.backend.backend.repository.order.entity.OrderEntity;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer>, JpaSpecificationExecutor<OrderEntity> {
     @Query("SELECT new com.backend.backend.model.order.OrderStatsDTO(o.user.id, COUNT(o.id), SUM(o.total_cost)) " +

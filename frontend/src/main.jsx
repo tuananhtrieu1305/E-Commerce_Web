@@ -14,12 +14,16 @@ import ManageUsers from "./pages/admin/ManageUsers.jsx";
 import ManageAdmins from "./pages/admin/ManageAdmins.jsx";
 import ManageOrders from "./pages/admin/ManageOrders.jsx";
 import ManageProducts from "./pages/admin/ManageProducts.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import CartPage from "./pages/cart/CartPage.jsx";
 import { ConfigProvider } from "antd";
 import enUS from "antd/locale/en_US";
-<<<<<<< HEAD
-=======
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
->>>>>>> feature/auth
+import { CartProvider } from "./context/CartContext.jsx";
+import { CheckoutProvider } from "./context/CheckoutContext.jsx";
+import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
+import PaymentReturnPage from "./pages/checkout/PaymentReturnPage.jsx";
+import OrderHistoryPage from './pages/client/OrderHistoryPage.jsx';
+import OrderDetailPage from './pages/client/OrderDetailPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +42,32 @@ const router = createBrowserRouter([
         path: "/about",
         element: <AboutPage />,
       },
+      {
+        path: "/cart", 
+        element: <CartPage />,
+      },
+      {
+        path: "/payment-result", 
+        element: <PaymentReturnPage  />,
+      },
+
+      {
+        path: "/profile/orders", 
+        element: <OrderHistoryPage  />,
+      },
+      {
+        path: "/order-detail/:id", 
+        element: <OrderDetailPage  />,
+      },
+
+      {
+        path: "/checkout",
+        element: (
+          <CheckoutProvider>
+            <CheckoutPage />
+          </CheckoutProvider>
+        ),
+      }
     ],
   },
   {
@@ -49,30 +79,6 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-<<<<<<< HEAD
-    path: "/admin",
-    element: <AdminPage />,
-    children: [
-      {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: "/admin/users",
-        element: <ManageUsers />,
-      },
-      {
-        path: "/admin/admins",
-        element: <ManageAdmins />,
-      },
-      {
-        path: "/admin/orders",
-        element: <ManageOrders />,
-      },
-      {
-        path: "/admin/products",
-        element: <ManageProducts />,
-=======
     element: <ProtectedRoute />,
     children: [
       {
@@ -100,7 +106,6 @@ const router = createBrowserRouter([
             element: <ManageProducts />,
           },
         ],
->>>>>>> feature/auth
       },
     ],
   },
@@ -109,7 +114,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ConfigProvider locale={enUS}>
-      <RouterProvider router={router} />
+      <CartProvider> 
+        <RouterProvider router={router} />
+      </CartProvider>
     </ConfigProvider>
   </StrictMode>
 );

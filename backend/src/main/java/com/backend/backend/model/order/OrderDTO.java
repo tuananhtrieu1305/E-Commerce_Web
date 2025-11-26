@@ -1,9 +1,9 @@
 package com.backend.backend.model.order;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class OrderDTO {
     private Integer id;

@@ -1,13 +1,14 @@
 package com.backend.backend.converter.order;
 
-import com.backend.backend.builder.order.OrderItemSearchBuilder;
-import com.backend.backend.builder.order.OrderSearchBuilder;
-import com.backend.backend.utils.MapUtil;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
+import com.backend.backend.builder.order.OrderItemSearchBuilder;
+import com.backend.backend.builder.order.OrderSearchBuilder;
+import com.backend.backend.utils.MapUtil;
 
 @Component
 public class OrderSearchBuilderConverter {
@@ -35,6 +36,9 @@ public class OrderSearchBuilderConverter {
         if (body.containsKey("order_items")) {
             List<Map<String, Object>> orderItems = (List<Map<String, Object>>) body.get("order_items");
             builder.setOrder_items(convertOrderItems(orderItems));
+        }
+        if (body.containsKey("payment_method")) {
+            builder.setPaymentMethod(MapUtil.getObject(body, "payment_method", String.class));
         }
 
         return builder.build();

@@ -16,6 +16,8 @@ public class OrderSearchBuilder {
     private List<OrderItemSearchBuilder> order_items;
     private String payment_status;
 
+    private String paymentMethod;
+
     private OrderSearchBuilder(Builder builder) {
         this.id = builder.id;
         this.customer_id = builder.customer_id;
@@ -29,6 +31,7 @@ public class OrderSearchBuilder {
         this.note = builder.note;
         this.order_items = builder.order_items;
         this.payment_status = builder.payment_status;
+        this.paymentMethod = builder.paymentMethod;
     }
 
     public Integer getId() {
@@ -79,6 +82,10 @@ public class OrderSearchBuilder {
         return payment_status;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
     public static class Builder {
         private Integer id;
         private Integer customer_id;
@@ -92,6 +99,7 @@ public class OrderSearchBuilder {
         private String note;
         private List<OrderItemSearchBuilder> order_items;
         private String payment_status;
+        private String paymentMethod;
 
         public Builder setId(Integer id) {
             this.id = id;
@@ -150,6 +158,10 @@ public class OrderSearchBuilder {
 
         public Builder setPayment_status(String payment_status) {
             this.payment_status = payment_status;
+            return this;
+        }
+        public Builder setPaymentMethod(String paymentMethod) {
+            this.paymentMethod = paymentMethod;
             return this;
         }
 

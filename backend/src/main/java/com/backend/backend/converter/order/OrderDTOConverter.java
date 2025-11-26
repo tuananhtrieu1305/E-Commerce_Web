@@ -1,15 +1,16 @@
 package com.backend.backend.converter.order;
 
-import com.backend.backend.model.order.OrderDTO;
-import com.backend.backend.model.order.OrderItemDTO;
-import com.backend.backend.repository.order.entity.OrderEntity;
-import com.backend.backend.repository.order.entity.OrderItemEntity;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.backend.backend.model.order.OrderDTO;
+import com.backend.backend.model.order.OrderItemDTO;
+import com.backend.backend.repository.order.entity.OrderEntity;
+import com.backend.backend.repository.order.entity.OrderItemEntity;
 
 @Component
 public class OrderDTOConverter {
@@ -20,7 +21,6 @@ public class OrderDTOConverter {
     public OrderDTO toOrderDTO(OrderEntity order) {
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
 
-        // Set user info
         if (order.getUser() != null) {
             orderDTO.setCustomer_id(order.getUser().getId());
             if (order.getUser().getAccount() != null) {
@@ -62,8 +62,7 @@ public class OrderDTOConverter {
 
     public List<OrderDTO> toOrderDTOList(List<OrderEntity> entities) {
         if (entities == null) {
-            return java.util.Collections.emptyList();
-        }
+            return java.util.Collections.emptyList();}
         return entities.stream()
                 .map(this::toOrderDTO)
                 .collect(Collectors.toList());
