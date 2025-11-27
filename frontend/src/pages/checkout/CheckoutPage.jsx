@@ -13,7 +13,7 @@ import {
   Typography
 } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { createVnpayPayment } from "../../services/orderService.js";
+import { createVnpayPayment } from "../../services/OrderAPI.js"; 
 import { EnvironmentOutlined, PhoneOutlined, FileTextOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -63,6 +63,7 @@ export default function CheckoutPage() {
         totalCost,
         paymentMethod
       );
+      // console.log("LOG KIỂM TRA savedOrder:", savedOrder);
 
       if (savedOrder?.status === 400) {
         throw new Error(savedOrder.message);

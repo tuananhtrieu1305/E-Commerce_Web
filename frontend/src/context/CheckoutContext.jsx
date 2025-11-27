@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { getCart } from "../services/cartService";
-import { createOrder } from "../services/orderService";
 import { getUserId } from '../utils/auth';
+import { createOrder } from "../services/OrderAPI";
 
 const CheckoutContext = createContext(null);
 
@@ -12,7 +12,6 @@ export const CheckoutProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
@@ -42,30 +41,44 @@ export const CheckoutProvider = ({ children }) => {
   );
 
   const handleSubmitOrder = async (itemsToOrder, finalTotalCost) => {
+    // 1. Chuẩn bị dữ liệu gửi đi (Payload)
     const payload = {
-      customer_id: userId,
-      customer_name: customerName,
-      phone,
-      address,
-      note,
+      customer_id: userId, // Lấy từ auth hoặc state
+      phone: phone,        // Lấy từ state của Context
+      address: address,    // Lấy từ state của Context
+      note: note,          // Lấy từ state của Context
       total_cost: finalTotalCost,
-      payment_method: paymentMethod,
+      payment_method: paymentMethod, // Lấy từ state của Context
+      
+      // Map sản phẩm sang định dạng Backend yêu cầu
       order_items: itemsToOrder.map((item) => ({
-        prod_id: item.productId,
+        prod_id: item.productId, // Backend dùng prod_id
         quantity: item.quantity,
       })),
     };
 
-    const savedOrder = await createOrder(payload);
-    return savedOrder;
+    try {
+      // 2. Gọi API từ orderAPI.js
+      const res = await createOrder(payload);
+
+      // 3. XỬ LÝ KẾT QUẢ (Quan trọng)
+      // Axios trả về object { data: ..., status: ... }
+      // Ta cần lấy phần data thực sự để trả về (chứa id đơn hàng)
+      const savedOrder = res.data || res;
+
+      return savedOrder; 
+
+    } catch (error) {
+      console.error("Lỗi tạo đơn hàng:", error);
+      // Trả về object báo lỗi để UI hiển thị
+      return { status: 400, message: "Không thể tạo đơn hàng" };
+    }
   };
 
   const value = {
     items,
     loading,
     error,
-    customerName,
-    setCustomerName,
     phone,
     setPhone,
     address,

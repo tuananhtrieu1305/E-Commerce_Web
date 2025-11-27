@@ -83,6 +83,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/seller/**").permitAll()
                         .requestMatchers("/api/chatbot/**").permitAll()
+                        .requestMatchers("/api/payment/**").permitAll()
 
                         // Tất cả các request còn lại đều phải được xác thực
                         .anyRequest().authenticated()

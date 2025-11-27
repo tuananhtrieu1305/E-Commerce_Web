@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Card, Descriptions, Table, Tag, Typography, Spin, Button, Divider } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { getOrderDetail } from '../../services/OrderAPI';
 
 const { Title, Text } = Typography;
 
@@ -14,7 +15,7 @@ export default function OrderDetailPage() {
   useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        const res = await axios.get(`http://localhost:8081/api/order/?id=${id}`);
+        const res = await getOrderDetail(id);
         if (res.data && res.data.length > 0) setOrder(res.data[0]);
       } catch (error) {
         console.error("Lỗi tải đơn hàng", error);

@@ -9,13 +9,8 @@ import {
   LogoutOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
-<<<<<<< HEAD
 import { Layout, Menu, Dropdown, Space, Avatar } from "antd";
 import { Outlet, Link, useLocation } from "react-router-dom";
-=======
-import { Layout, Menu, Dropdown, Avatar, message } from "antd";
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
->>>>>>> feature/auth
 import React, { useState, useEffect, memo } from "react";
 import Logo from "../../components/Logo";
 import Logo_Icon from "../../assets/logoPage/Logo_Icon.png";
@@ -23,17 +18,6 @@ import Logo_Icon from "../../assets/logoPage/Logo_Icon.png";
 const { Content, Sider, Header: AntHeader } = Layout;
 
 const MemoizedHeader = memo(({ collapsed, onToggle }) => {
-<<<<<<< HEAD
-=======
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user_role");
-    message.success("Logged out successfully.");
-    navigate("/login");
-  };
->>>>>>> feature/auth
   const dropdownItems = [
     {
       label: <Link to="/">Homepage</Link>,
@@ -42,7 +26,6 @@ const MemoizedHeader = memo(({ collapsed, onToggle }) => {
     },
     { type: "divider" },
     {
-<<<<<<< HEAD
       label: <span style={{ cursor: "pointer" }}>Log out</span>,
       key: "logout",
       icon: <LogoutOutlined />,
@@ -52,16 +35,6 @@ const MemoizedHeader = memo(({ collapsed, onToggle }) => {
 
   const urlAvatar = ``;
 
-=======
-      label: "Log out",
-      key: "logout",
-      icon: <LogoutOutlined />,
-      danger: true,
-      onClick: handleLogout,
-    },
-  ];
-
->>>>>>> feature/auth
   return (
     <AntHeader className="!p-0 flex items-center justify-between shadow-sm sticky top-0 z-10 ">
       <div className="flex items-center">
@@ -74,18 +47,12 @@ const MemoizedHeader = memo(({ collapsed, onToggle }) => {
           }
         )}
       </div>
-<<<<<<< HEAD
       <div className="pr-6">
         <Dropdown menu={{ items: dropdownItems }} trigger={["click"]}>
           <Space className="cursor-pointer p-2 rounded-md">
             <Avatar src={urlAvatar} />
             <span className="font-medium text-gray-600">Admin</span>
           </Space>
-=======
-      <div className="pr-6 cursor-pointer">
-        <Dropdown menu={{ items: dropdownItems }} trigger={["click"]}>
-          <Avatar icon={<UserOutlined />} className="text-white !bg-[#888]" />
->>>>>>> feature/auth
         </Dropdown>
       </div>
     </AntHeader>

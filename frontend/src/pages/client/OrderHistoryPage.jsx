@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag, Typography, Button, message, Card, Tooltip } from 'antd';
 import { EyeOutlined, CreditCardOutlined, HistoryOutlined } from '@ant-design/icons';
-import axios from 'axios'; 
 import { Link } from 'react-router-dom';
 import { getUserId } from '../../utils/auth';
-
+import { getOrderHistory ,createVnpayPayment } from '../../services/OrderAPI';
 const { Title, Text } = Typography;
 
 export default function OrderHistoryPage() {
@@ -18,8 +17,8 @@ export default function OrderHistoryPage() {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://localhost:8081/api/order/history/${userId}`);
-        setOrders(res.data);
+        const res = await getOrderHistory(userId);
+        setOrders(res);
       } catch (error) {
         message.error("Lỗi không tải được lịch sử đơn hàng");
       } finally {
@@ -32,9 +31,17 @@ export default function OrderHistoryPage() {
   const handleRepay = async (orderId) => {
     try {
       message.loading({ content: "Đang chuyển hướng...", key: "pay_loading" });
-      const res = await axios.post('http://localhost:8081/api/payment/create-vnpay', { orderId });
-      if (res.data.paymentUrl) window.location.href = res.data.paymentUrl;
+      const res = await createVnpayPayment(orderId);
+      const paymentUrl = res.paymentUrl || res.data?.paymentUrl;
+
+      if (paymentUrl) {
+         window.location.href = paymentUrl;
+      } else {
+         message.error({ content: "Không lấy được link thanh toán", key: "pay_loading" });
+      }
+
     } catch (error) {
+      console.error(error);
       message.error({ content: "Lỗi tạo link thanh toán", key: "pay_loading" });
     }
   };

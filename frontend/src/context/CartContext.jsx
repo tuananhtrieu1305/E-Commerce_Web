@@ -21,6 +21,7 @@ export function CartProvider({ children }) {
 
     // Hàm tải giỏ hàng
     const fetchCart = useCallback(async () => {
+      if (!userId) return;
         try {
             setLoading(true);
             setError(null);
@@ -35,11 +36,18 @@ export function CartProvider({ children }) {
     }, [userId]); 
 
     useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
+        if (userId) {
+            fetchCart();
+        } else {
+            setItems([]);
+            setLoading(false); 
+        }
+    }, [userId, fetchCart]);
 
     const setItemQuantity = useCallback(
     (productId, newQty) => {
+      if (!userId) return;
+
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }

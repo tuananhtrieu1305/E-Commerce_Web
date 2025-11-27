@@ -24,7 +24,7 @@ import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 import PaymentReturnPage from "./pages/checkout/PaymentReturnPage.jsx";
 import OrderHistoryPage from './pages/client/OrderHistoryPage.jsx';
 import OrderDetailPage from './pages/client/OrderDetailPage.jsx';
-
+import '@ant-design/v5-patch-for-react-19';
 const router = createBrowserRouter([
   {
     path: "/",

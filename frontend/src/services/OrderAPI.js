@@ -19,3 +19,14 @@ export const createOrder = (payload) => {
   const url = "/api/order";
   return axios.post(url, payload);
 };
+
+export const getOrderHistory = (userId) => {
+  return axios.get(`/api/order/history/${userId}`);
+};
+
+export const createVnpayPayment = (orderId) => {
+  return axios.post("/api/payment/create-vnpay", { orderId });
+};
+export const getOrderDetail = (id) => {
+  return axios.get(`/api/order?id=${id}`);
+};

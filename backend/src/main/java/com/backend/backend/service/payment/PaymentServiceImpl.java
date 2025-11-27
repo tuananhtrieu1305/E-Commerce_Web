@@ -35,11 +35,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public String createVnpayPaymentUrl(Integer orderId, HttpServletRequest request) throws Exception {
+
         OrderEntity order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         long amount = order.getTotal_cost() * 100;
         String ip = request.getRemoteAddr();
+
 
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
@@ -75,10 +77,12 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
+
         if (hashData.length() > 0) hashData.setLength(hashData.length() - 1);
         if (query.length() > 0) query.setLength(query.length() - 1);
 
         String secureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
+        System.out.println("VNPAY URL: " + vnp_Url + "?" + query + "&vnp_SecureHash=" + secureHash);
         return vnp_Url + "?" + query + "&vnp_SecureHash=" + secureHash;
     }
 
