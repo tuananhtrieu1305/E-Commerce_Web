@@ -217,7 +217,9 @@ export default function ProductsPage() {
                     sellerName={product.seller?.seller_name}
                     imageUrl={
                       product.imagePaths?.[0]?.image_path
-                        ? `http://localhost:8081${product.imagePaths[0].image_path}`
+                        ? `${import.meta.env.VITE_BACKEND_URL}${
+                            product.imagePaths[0].image_path
+                          }`
                         : null
                     }
                   />

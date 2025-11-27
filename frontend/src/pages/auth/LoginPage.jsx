@@ -27,8 +27,8 @@ const LoginPage = () => {
 
       localStorage.setItem("access_token", res.data.token);
       localStorage.setItem("user_role", res.data.userDetails.role);
-      localStorage.setItem("user_id", res.data.userDetails.profile.id);// thanhtoan
-      localStorage.setItem("account_id", res.data.userDetails.id);//cart
+      localStorage.setItem("user_id", res.data.userDetails.profile.id); // thanhtoan
+      localStorage.setItem("account_id", res.data.userDetails.id); //cart
       navigate("/");
     } else {
       messageApi.open({
@@ -46,7 +46,12 @@ const LoginPage = () => {
 
         <div className="absolute top-0 right-0 bottom-0 left-0 px-[20px] lg:px-0 lg:left-1/2 flex items-center justify-center flex-col">
           <div className="max-w-[460px]">
-            <Logo />
+            <div
+              className="text-2xl font-bold text-center whitespace-nowrap cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              NEXTPICK
+            </div>
             <h1 className="mt-[50px] poppins-medium text-3xl text-center">
               Hello Again!
             </h1>

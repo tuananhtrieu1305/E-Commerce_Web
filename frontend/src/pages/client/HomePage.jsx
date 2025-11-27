@@ -300,7 +300,7 @@ export default function Home() {
 
       {/* Special Offers */}
       <ProductSection
-        title="popular products"
+        title="Popular Products"
         apiUrl="http://localhost:8081/api/product/top-buyer"
         viewAllHref={"/products?sort=popular"}
       />
@@ -312,7 +312,7 @@ export default function Home() {
         error={categoryError}
       />
       <ProductSection
-        title="best rate products"
+        title="Best Rate Products"
         apiUrl="http://localhost:8081/api/product/top-rated"
         viewAllHref="/products?sort=rating"
       />

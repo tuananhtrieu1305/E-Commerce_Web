@@ -15,10 +15,12 @@ import formatVND from "../../helpers/ConvertMoney";
 import ChatBotLogo from "../../assets/chatbot/Logo.png";
 import CloseIcon from "../../assets/chatbot/close_icon.svg";
 import Anonymous from "../../assets/profilePics/Anonymous.png";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
 const ChatbotFloat = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -146,7 +148,12 @@ const ChatbotFloat = () => {
               itemLayout="horizontal"
               dataSource={msg.content} // msg.content là mảng [product1, product2]
               renderItem={(product) => (
-                <List.Item className="cursor-pointer">
+                <List.Item
+                  className="cursor-pointer hover:bg-gray-50 transition-colors rounded-md"
+                  onClick={() => {
+                    navigate(`/products/${product.id}`);
+                  }}
+                >
                   <List.Item.Meta
                     avatar={
                       <Avatar

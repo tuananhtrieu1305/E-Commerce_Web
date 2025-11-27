@@ -48,7 +48,12 @@ const RegisterPage = () => {
 
         <div className="absolute top-0 right-0 bottom-0 left-0 px-[20px] lg:px-0 lg:left-1/2 flex items-center justify-center flex-col">
           <div className="max-w-[460px]">
-            <Logo />
+            <div
+              className="text-2xl font-bold text-center whitespace-nowrap cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              NEXTPICK
+            </div>
             <h1 className="mt-[50px] poppins-medium text-3xl text-center">
               Sign Up
             </h1>

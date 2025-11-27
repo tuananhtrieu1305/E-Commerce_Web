@@ -29,7 +29,7 @@ export function Banner({
               : "https://happyphone.vn/wp-content/uploads/2025/09/iPhone-17-Pro-va-iPhone-17-Pro-Max-chinh-thuc-ra-mat-co-gi-moi.jpg"
           }
           alt="banner"
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
 

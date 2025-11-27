@@ -149,9 +149,11 @@ export function ProductSection({
                   }
                   rating={product.rating || 0}
                   reviewCount={product.reviewCount || 0}
-                  category={product.category?.cate_name || "Khác"}
+                  categoryName={product.category?.cate_name || "Khác"}
                   productInfo={product.productInfo}
-                  imagePath={product.imagePaths}
+                  imagePaths={product.imagePaths}
+                  sellerName={product.seller.seller_name}
+                  stock={product.stock}
                 />
               </div>
             ))}

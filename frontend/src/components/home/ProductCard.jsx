@@ -9,7 +9,7 @@ export default function ProductCard({
   stock = 0,
   categoryName = "Danh mục",
   sellerName = "Người bán",
-  imageUrl = null,
+  imageUrl,
 }) {
   const navigate = useNavigate();
 
@@ -59,11 +59,11 @@ export default function ProductCard({
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-xl shadow-sm hover:shadow-lg transition group cursor-pointer overflow-hidden"
+      className="bg-white rounded-xl shadow-sm hover:shadow-lg transition group cursor-pointer overflow-hidden h-[400px]"
     >
       {/* Product Image */}
       <div
-        className={`bg-gradient-to-br ${bgGradient} h-64 flex items-center justify-center text-7xl overflow-hidden relative`}
+        className={`bg-gradient-to-br ${bgGradient} h-[200px] flex items-center justify-center text-7xl overflow-hidden relative`}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-slate-100/40 to-transparent backdrop-blur-sm" />
         {imageUrl ? (

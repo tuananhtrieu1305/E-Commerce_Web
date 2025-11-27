@@ -22,10 +22,9 @@ import { CartProvider } from "./context/CartContext.jsx";
 import { CheckoutProvider } from "./context/CheckoutContext.jsx";
 import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 import PaymentReturnPage from "./pages/checkout/PaymentReturnPage.jsx";
-import OrderHistoryPage from './pages/client/OrderHistoryPage.jsx';
-import OrderDetailPage from './pages/client/OrderDetailPage.jsx';
-import '@ant-design/v5-patch-for-react-19';
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import OrderHistoryPage from "./pages/client/OrderHistoryPage.jsx";
+import OrderDetailPage from "./pages/client/OrderDetailPage.jsx";
+import "@ant-design/v5-patch-for-react-19";
 import ProductsPage from "./pages/client/ProductsPage.jsx";
 import ProductDetailPage from "./pages/client/ProductDetailPage.jsx";
 import ProfileUpdate from "./pages/client/ProfileUpdatePage.jsx";
@@ -47,21 +46,21 @@ const router = createBrowserRouter([
         element: <AboutPage />,
       },
       {
-        path: "/cart", 
+        path: "/cart",
         element: <CartPage />,
       },
       {
-        path: "/payment-result", 
-        element: <PaymentReturnPage  />,
+        path: "/payment-result",
+        element: <PaymentReturnPage />,
       },
 
       {
-        path: "/profile/orders", 
-        element: <OrderHistoryPage  />,
+        path: "/profile/orders",
+        element: <OrderHistoryPage />,
       },
       {
-        path: "/order-detail/:id", 
-        element: <OrderDetailPage  />,
+        path: "/order-detail/:id",
+        element: <OrderDetailPage />,
       },
 
       {
@@ -71,10 +70,8 @@ const router = createBrowserRouter([
             <CheckoutPage />
           </CheckoutProvider>
         ),
-      }
-       ,{ path: "/products",
-        element: <ProductsPage />,
       },
+      { path: "/products", element: <ProductsPage /> },
       {
         path: "/products/:id",
         element: <ProductDetailPage />,
@@ -129,7 +126,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ConfigProvider locale={enUS}>
-      <CartProvider> 
+      <CartProvider>
         <RouterProvider router={router} />
       </CartProvider>
     </ConfigProvider>

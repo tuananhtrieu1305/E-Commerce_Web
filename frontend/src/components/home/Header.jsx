@@ -98,7 +98,7 @@ export function Header({ searchQuery, onSearchChange }) {
                     <div className="absolute right-0 mt-2 w-52 bg-white text-slate-800 rounded-lg shadow-lg py-2 text-sm z-50">
                       <button
                         onClick={() => {
-                          navigate("/profile");
+                          navigate("/update-user");
                           setIsUserMenuOpen(false);
                         }}
                         className="w-full text-left px-4 py-2 hover:bg-slate-100"
