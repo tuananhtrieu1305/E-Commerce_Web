@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
-  Headphones,
-  Monitor,
   Smartphone,
-  Laptop,
+  Book,
+  Shirt,
+  Dumbbell,
+  GraduationCap,
+  Headphones,
   Gamepad2,
-  Camera,
-  Zap,
-  TrendingUp,
+  Plane,
+  Backpack,
+  Armchair,
 } from "lucide-react";
 import { Banner } from "../../components/home/Banner";
 import { CategoriesSection } from "../../components/home/CategoriesSection";
@@ -18,7 +20,8 @@ import { ProductSection } from "../../components/home/ProductSection";
 import { Taskbar } from "../../components/home/Taskbar";
 import { useNavigate } from "react-router-dom";
 import { getProduct } from "../../services/ProductAPI";
-
+import { getCategoryWithProduct } from "../../services/CategoryAPI";
+import ICON_MAP from "../../hooks/icon_map";
 export default function Home() {
   const [currentBanner, setCurrentBanner] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,9 +31,36 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
-
+  const [taskbarItems, setTaskbarItems] = useState([]);
   const navigate = useNavigate();
 
+  function getIconComponent(categoryName) {
+    switch (categoryName) {
+      case "Electronics":
+        return Smartphone;
+      case "Books":
+        return Book;
+      case "Fashion":
+        return Shirt;
+      case "Sports":
+        return Dumbbell;
+      case "Education":
+        return GraduationCap;
+      case "Audio":
+        return Headphones;
+      case "Gaming":
+        return Gamepad2;
+      case "Travel":
+        return Plane;
+      case "Accessories":
+        return Backpack;
+      case "Furniture":
+        return Armchair;
+
+      default:
+        return Smartphone; // fallback
+    }
+  }
   const banners = [
     {
       title: "Introducing the Next Generation of Sound",
@@ -52,18 +82,33 @@ export default function Home() {
     },
   ];
 
-  const taskbarItems = [
-    { icon: Monitor, label: "Computer" },
-    { icon: Smartphone, label: "Smartphone" },
-    { icon: Monitor, label: "Monitor" },
-    { icon: Gamepad2, label: "Gaming" },
-    { icon: Camera, label: "Camera" },
-    { icon: Headphones, label: "Headphones" },
-    { icon: Laptop, label: "Laptop" },
-    { icon: Smartphone, label: "Smart Watch" },
-    { icon: Zap, label: "Wearables" },
-    { icon: TrendingUp, label: "Deals" },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategoryWithProduct(); // axios
+        const data = res.data; // lấy mảng categories
+
+        const mapped = data.map((cate, index) => {
+          const name = cate.category_name;
+          const IconComponent = getIconComponent(name);
+
+          return {
+            id: index + 1, // tự tạo id
+            label: name, // tên hiển thị
+            icon: IconComponent, // icon component
+            code: name, // dùng name làm code → truyền sang query param
+            products: cate.products,
+          };
+        });
+
+        setTaskbarItems(mapped);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Tự động đổi banner
   useEffect(() => {
@@ -90,7 +135,7 @@ export default function Home() {
         // Nếu BE bọc { data: [...] } thì đổi thành:
         // const json = await res.json();
         // const data = json.data;
-        console.log(data.data);
+
         setCategories(data.data || []);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -265,6 +310,7 @@ export default function Home() {
       <ProductSection
         title="popular products"
         apiUrl="http://localhost:8081/api/product/top-buyer"
+        viewAllHref={"/products?sort=popular"}
       />
 
       {/* Categories */}
@@ -276,6 +322,7 @@ export default function Home() {
       <ProductSection
         title="best rate products"
         apiUrl="http://localhost:8081/api/product/top-rated"
+        viewAllHref="/products?sort=rating"
       />
 
       {/* Footer */}

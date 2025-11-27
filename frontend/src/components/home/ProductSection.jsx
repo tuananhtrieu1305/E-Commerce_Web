@@ -1,19 +1,21 @@
 // src/components/home/SpecialOfferSection.jsx
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 
 export function ProductSection({
   title = "Special offers",
-  apiUrl, // URL API để fetch product (có thể khác nhau mỗi nơi)
-  viewAllHref = "#", // link "View all"
-  limit, // số lượng tối đa muốn hiển thị (optional)
+  apiUrl, // URL API để fetch product
+  viewAllHref, // optional: nếu truyền thì ưu tiên navigate tới đây
+  limit,
 }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,7 +30,6 @@ export function ProductSection({
           if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
           const json = await res.json();
 
-          // handle các kiểu response: [..], {data:[..]}, {content:[..]}
           if (Array.isArray(json)) {
             data = json;
           } else if (Array.isArray(json.data)) {
@@ -67,6 +68,23 @@ export function ProductSection({
     scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
   };
 
+  // 👉 View all: điều hướng sang ProductsPage với sort tương ứng
+  const handleViewAll = () => {
+    if (viewAllHref) {
+      // nếu bạn muốn truyền custom link từ ngoài
+      navigate(viewAllHref);
+      return;
+    }
+
+    if (apiUrl?.includes("top-buyer")) {
+      navigate("/products?sort=popular");
+    } else if (apiUrl?.includes("top-rated")) {
+      navigate("/products?sort=rating");
+    } else {
+      navigate("/products");
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -99,17 +117,17 @@ export function ProductSection({
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
-        <a
-          href={viewAllHref}
+        <button
+          type="button"
+          onClick={handleViewAll}
           className="text-blue-600 font-medium hover:underline flex items-center gap-1"
         >
           View all <ChevronRight size={18} />
-        </a>
+        </button>
       </div>
 
-      {/* Slider giống CategoriesSection (trượt ngang + mũi tên) */}
+      {/* Slider */}
       <div className="relative">
-        {/* Nút trái */}
         <button
           type="button"
           onClick={scrollLeft}
@@ -118,7 +136,6 @@ export function ProductSection({
           <ChevronLeft size={18} />
         </button>
 
-        {/* Vùng trượt */}
         <div ref={scrollRef} className="overflow-x-auto no-scrollbar">
           <div className="flex gap-4 min-w-max">
             {products.map((product) => (
@@ -141,7 +158,6 @@ export function ProductSection({
           </div>
         </div>
 
-        {/* Nút phải */}
         <button
           type="button"
           onClick={scrollRight}

@@ -1,9 +1,32 @@
+import { useState, useEffect, useRef } from "react";
 import { Search, Heart, User, ShoppingCart, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function Header({ searchQuery, onSearchChange }) {
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token"); // 👈 kiểm tra đăng nhập
+
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
+
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user"); // nếu bạn đang lưu thêm
+    setIsUserMenuOpen(false);
+    navigate("/login");
+  };
 
   return (
     <header className="absolute top-6 left-6 right-6 z-50">
@@ -62,11 +85,46 @@ export function Header({ searchQuery, onSearchChange }) {
                   size={24}
                   className="cursor-pointer hover:text-red-200 transition"
                 />
-                <User
-                  size={24}
-                  className="cursor-pointer hover:text-white transition"
-                  onClick={() => navigate("/profile")}
-                />
+
+                {/* User + Dropdown */}
+                <div className="relative" ref={userMenuRef}>
+                  <User
+                    size={24}
+                    className="cursor-pointer hover:text-white transition"
+                    onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                  />
+
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-52 bg-white text-slate-800 rounded-lg shadow-lg py-2 text-sm z-50">
+                      <button
+                        onClick={() => {
+                          navigate("/profile");
+                          setIsUserMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-slate-100"
+                      >
+                        Thông tin cá nhân
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigate("/orders"); // đổi path nếu backend bạn khác
+                          setIsUserMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-slate-100"
+                      >
+                        Đơn hàng của tôi
+                      </button>
+                      <div className="h-px bg-slate-200 my-1" />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50"
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <ShoppingCart
                   size={24}
                   className="cursor-pointer hover:text-white transition"

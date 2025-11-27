@@ -1,20 +1,8 @@
 // src/components/home/CategoriesSection.jsx
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useRef } from "react";
-
-// Map tên category → emoji icon
-const ICON_MAP = {
-  Electronics: "📱",
-  Books: "📚",
-  Fashion: "👗",
-  Sports: "⚽",
-  Education: "🎓",
-  Audio: "🎧",
-  Gaming: "🎮",
-  Travel: "🧳",
-  Accessories: "🎒",
-  Furniture: "🪑",
-};
+import { useNavigate } from "react-router-dom"; // 👈 thêm
+import ICON_MAP from "../../hooks/icon_map";
 
 function getIcon(name) {
   return ICON_MAP[name] || "🛒"; // default icon nếu không khớp
@@ -22,8 +10,16 @@ function getIcon(name) {
 
 export function CategoriesSection({ categories = [], loading, error }) {
   const scrollRef = useRef(null);
+  const navigate = useNavigate(); // 👈 thêm
 
   const safeCategories = Array.isArray(categories) ? categories : [];
+
+  // 👉 click 1 category → /products?category=<tên>
+  const handleClickCategory = (cat) => {
+    const name = cat.category_name || cat.cate_name || cat.cateName || "";
+    if (!name) return;
+    navigate(`/products?category=${encodeURIComponent(name)}`);
+  };
 
   const scrollLeft = () => {
     if (!scrollRef.current) return;
@@ -73,12 +69,13 @@ export function CategoriesSection({ categories = [], loading, error }) {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-slate-800">Shop by category</h2>
-        <a
-          href="#"
+        <button
+          type="button"
+          onClick={() => navigate("/products")} // 👈 View all → tất cả sản phẩm
           className="text-blue-600 font-medium hover:underline flex items-center gap-1"
         >
           View all <ChevronRight size={18} />
-        </a>
+        </button>
       </div>
 
       {/* Carousel với 2 mũi tên */}
@@ -93,16 +90,13 @@ export function CategoriesSection({ categories = [], loading, error }) {
         </button>
 
         {/* Vùng scroll ngang */}
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto no-scrollbar"
-          // nếu muốn giảm độ “thô” của scrollbar thì thêm style cho Firefox/IE:
-          // style={{ scrollbarWidth: "thin", msOverflowStyle: "none" }}
-        >
+        <div ref={scrollRef} className="overflow-x-auto no-scrollbar">
           <div className="flex gap-4 min-w-max">
             {safeCategories.map((cat) => (
-              <div
+              <button
                 key={cat.id}
+                type="button"
+                onClick={() => handleClickCategory(cat)} // 👈 click 1 ô
                 className="flex-none w-40 bg-white rounded-xl p-6 text-center cursor-pointer hover:shadow-lg hover:border-blue-200 transition group border border-transparent"
               >
                 <div className="text-5xl mb-3 group-hover:scale-110 transition">
@@ -113,7 +107,7 @@ export function CategoriesSection({ categories = [], loading, error }) {
                 <p className="font-medium text-slate-700 group-hover:text-blue-600">
                   {cat.category_name || cat.cate_name || cat.cateName}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
         </div>

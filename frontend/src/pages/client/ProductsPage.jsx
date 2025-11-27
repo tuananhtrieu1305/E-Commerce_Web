@@ -3,8 +3,12 @@ import { Header } from "../../components/home/Header";
 import FilterSidebar from "../../components/product/FilterSidebar";
 import SortBar from "../../components/product/SortBar";
 import ProductCard from "../../components/home/ProductCard";
-import { useNavigate } from "react-router-dom";
-import { getProduct } from "../../services/ProductAPI"; // ⬅ dùng lại hàm bạn gửi
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  getProduct,
+  getTopBuyerProduct,
+  getTopRatedProduct,
+} from "../../services/ProductAPI";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -12,50 +16,92 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity });
-  const [sortBy, setSortBy] = useState("default");
+  const [sortBy, setSortBy] = useState("default"); // sort theo giá
   const [loading, setLoading] = useState(false);
 
+  const [sortMode, setSortMode] = useState("all"); // all | popular | rating
+
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // 🔵 Build query string để truyền vào getProduct()
-  const buildQuery = () => {
-    const params = {};
-
-    if (selectedCategory) params.category_name = selectedCategory;
-    if (searchQuery) params.title = searchQuery;
-    if (priceRange.min > 0) params.minPrice = priceRange.min;
-    if (priceRange.max !== Infinity) params.maxPrice = priceRange.max;
-
-    const queryString = new URLSearchParams(params).toString();
-
-    return queryString ? `?${queryString}` : "";
-  };
-
-  // 🔵 Fetch bằng chính hàm của bạn
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const query = buildQuery(); // build ?key=value
-      const res = await getProduct(query); // dùng API bạn gửi'
-      const data = res.data || [];
-      setProducts(data);
-      setFilteredProducts(data);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🔵 Fetch mỗi khi filter thay đổi
+  // ✅ Fetch sản phẩm mỗi khi URL (category/title/sort) hoặc priceRange đổi
   useEffect(() => {
-    fetchProducts();
-  }, [selectedCategory, searchQuery, priceRange]);
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
 
-  // 🔵 Sort FE
+        const params = new URLSearchParams(location.search);
+        const categoryFromUrl = params.get("category") || "";
+        const titleFromUrl = params.get("title") || "";
+        const sortFromUrl = params.get("sort") || "all"; // popular | rating | all
+
+        setSelectedCategory(categoryFromUrl);
+        setSearchQuery(titleFromUrl);
+        setSortMode(sortFromUrl);
+
+        let data = [];
+
+        if (sortFromUrl === "popular") {
+          // /api/product/top-buyer
+          const res = await getTopBuyerProduct();
+          data = res;
+        } else if (sortFromUrl === "rating") {
+          // /api/product/top-rated
+          const res = await getTopRatedProduct();
+          data = res;
+        } else {
+          // Gọi list product bình thường với category + title + price
+          const queryParams = {};
+          if (categoryFromUrl) queryParams.category_name = categoryFromUrl;
+          if (titleFromUrl) queryParams.title = titleFromUrl;
+          if (priceRange.min > 0) queryParams.minPrice = priceRange.min;
+          if (priceRange.max !== Infinity)
+            queryParams.maxPrice = priceRange.max;
+
+          const queryString = new URLSearchParams(queryParams).toString();
+          const query = queryString ? `?${queryString}` : "";
+
+          const res = await getProduct(query);
+          data = res.data?.data || res.data || [];
+        }
+
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [location.search, priceRange]); // phụ thuộc URL + priceRange
+
+  // ✅ Filter + sort FE
   useEffect(() => {
     let result = [...products];
 
+    // filter theo category
+    if (selectedCategory) {
+      result = result.filter((p) => p.category?.cate_name === selectedCategory);
+    }
+
+    // filter theo search
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.productInfo?.toLowerCase().includes(q)
+      );
+    }
+
+    // filter theo priceRange
+    result = result.filter((p) => {
+      const price = p.price || 0;
+      return price >= priceRange.min && price <= priceRange.max;
+    });
+
+    // sort theo giá
     switch (sortBy) {
       case "price-asc":
         result.sort((a, b) => a.price - b.price);
@@ -68,15 +114,43 @@ export default function ProductsPage() {
     }
 
     setFilteredProducts(result);
-  }, [sortBy, products]);
+  }, [products, selectedCategory, searchQuery, priceRange, sortBy]);
 
   const categories = [...new Set(products.map((p) => p.category?.cate_name))];
+
+  // ✅ đổi category -> update URL để effect fetch chạy theo URL
+  const handleCategoryChange = (cate) => {
+    setSelectedCategory(cate);
+
+    const params = new URLSearchParams(location.search);
+    if (cate) params.set("category", cate);
+    else params.delete("category");
+
+    const queryString = params.toString();
+    navigate(queryString ? `/products?${queryString}` : "/products");
+  };
+
+  // ✅ đổi sortMode (Phổ biến / Đánh giá / Tất cả) -> update URL
+  const handleSortModeChange = (mode) => {
+    const params = new URLSearchParams(location.search);
+
+    if (mode === "all") {
+      params.delete("sort");
+    } else {
+      params.set("sort", mode); // popular | rating
+    }
+
+    const queryString = params.toString();
+    navigate(queryString ? `/products?${queryString}` : "/products");
+  };
 
   const handleResetFilters = () => {
     setSearchQuery("");
     setSelectedCategory("");
     setPriceRange({ min: 0, max: Infinity });
     setSortBy("default");
+    setSortMode("all");
+    navigate("/products"); // xoá hết query
   };
 
   const handleProductClick = (id) => {
@@ -94,7 +168,7 @@ export default function ProductsPage() {
             <FilterSidebar
               categories={categories.filter(Boolean)}
               selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
+              onCategoryChange={handleCategoryChange}
               priceRange={priceRange}
               onPriceRangeChange={setPriceRange}
               onResetFilters={handleResetFilters}
@@ -103,11 +177,14 @@ export default function ProductsPage() {
 
           {/* Products */}
           <div className="col-span-12 lg:col-span-9">
+            {/* SortBar theo giá */}
             <div className="mb-5">
               <SortBar
                 sortBy={sortBy}
                 onSortChange={setSortBy}
                 resultCount={filteredProducts.length}
+                sortMode={sortMode} // 👈 thêm
+                onSortModeChange={handleSortModeChange}
               />
             </div>
 
@@ -121,7 +198,7 @@ export default function ProductsPage() {
                 <p className="text-white mb-4">Không có sản phẩm nào</p>
                 <button
                   onClick={handleResetFilters}
-                  className="text-white bg-white/20 px-6 py-2 rounded-md"
+                  className="text-white bg.white/20 px-6 py-2 rounded-md"
                 >
                   Xóa bộ lọc
                 </button>

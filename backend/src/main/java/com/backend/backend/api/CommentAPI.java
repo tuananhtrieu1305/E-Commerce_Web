@@ -45,15 +45,12 @@ public class CommentAPI {
     }
 
     // 3. Tạo mới comment cho 1 sản phẩm
-@PostMapping("/api/comments/product/{productId}")
-public ResponseEntity<CommentDTO> createCommentForProduct(
-        @PathVariable Integer productId,
-        @RequestBody CommentDTO dto
-) {
-    dto.setProductId(productId);
-    CommentDTO created = commentService.createComment(dto);
-    return ResponseEntity.ok(created);
-}
+    @PostMapping()
+    public ResponseEntity<CommentDTO> createComment(@RequestBody CommentDTO dto) {
+        // yêu cầu FE gửi: userId, productId, star, content
+        CommentDTO created = commentService.createComment(dto);
+        return ResponseEntity.ok(created);
+    }
 
     // 4. Cập nhật comment (star / content)
     @PutMapping("/{id}")

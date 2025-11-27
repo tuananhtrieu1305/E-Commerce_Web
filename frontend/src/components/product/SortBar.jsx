@@ -1,37 +1,74 @@
-// Sort Bar Component
-export default function SortBar({ sortBy, onSortChange, resultCount }) {
-  const sortOptions = [
-    { value: "default", label: "Liên quan" },
-    { value: "popular", label: "Phổ biến" },
-    { value: "rating-desc", label: "Đánh giá" },
-    { value: "price-asc", label: "Giá tăng" },
-    { value: "price-desc", label: "Giá giảm" },
-  ];
-
+export default function SortBar({
+  sortBy,
+  onSortChange,
+  sortMode, // all | popular | rating
+  onSortModeChange, // function(mode)
+  resultCount,
+}) {
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-5">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm text-white/80 font-medium">Sắp xếp:</span>
-          <div className="flex flex-wrap gap-2">
-            {sortOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => onSortChange(option.value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                  sortBy === option.value
-                    ? "bg-white/30 text-white border border-white/40 shadow-lg"
-                    : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Bên trái: thông tin số kết quả */}
+      <p className="text-sm text-white/80">
+        Tìm thấy <span className="font-semibold">{resultCount}</span> sản phẩm
+      </p>
+
+      {/* Bên phải: các nút sort theo API + sort theo giá */}
+      <div className="flex items-center gap-3">
+        {/* 🔵 Nút Phổ biến / Đánh giá / Tất cả → điều khiển sortMode */}
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => onSortModeChange?.("popular")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-medium border transition ${
+              sortMode === "popular"
+                ? "bg-white/80 text-slate-900 border-white"
+                : "bg-white/10 text-white/80 border-white/20 hover:bg-white/20"
+            }`}
+          >
+            Phổ biến
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSortModeChange?.("rating")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-medium border transition ${
+              sortMode === "rating"
+                ? "bg-white/80 text-slate-900 border-white"
+                : "bg-white/10 text-white/80 border-white/20 hover:bg-white/20"
+            }`}
+          >
+            Đánh giá
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSortModeChange?.("all")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-medium border transition ${
+              sortMode === "all"
+                ? "bg-white/80 text-slate-900 border-white"
+                : "bg-white/10 text-white/80 border-white/20 hover:bg-white/20"
+            }`}
+          >
+            Tất cả
+          </button>
         </div>
-        <div className="text-sm text-white/80">
-          <span className="font-bold text-white">{resultCount}</span> sản phẩm
-        </div>
+
+        {/* 🟣 Sort theo giá (FE) như cũ */}
+        <select
+          value={sortBy}
+          onChange={(e) => onSortChange(e.target.value)}
+          className="bg-white/10 border border-white/20 text-xs text-white/90 px-3 py-1.5 rounded-lg focus:outline-none"
+        >
+          <option value="default" className="text-black">
+            Mặc định
+          </option>
+          <option value="price-asc" className="text-black">
+            Giá tăng dần
+          </option>
+          <option value="price-desc" className="text-black">
+            Giá giảm dần
+          </option>
+        </select>
       </div>
     </div>
   );
