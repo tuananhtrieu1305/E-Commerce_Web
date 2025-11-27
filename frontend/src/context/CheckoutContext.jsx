@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { getCart } from "../services/cartService";
-import { getUserId } from '../utils/auth';
 import { createOrder } from "../services/OrderAPI";
 
 const CheckoutContext = createContext(null);
 
 export const CheckoutProvider = ({ children }) => {
-  const userId = getUserId() || 1;
+  const accountId = localStorage.getItem("account_id")
+  const userId = localStorage.getItem("user_id")
+
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +22,7 @@ export const CheckoutProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const cartItems = await getCart(userId);
+      const cartItems = await getCart(accountId);
       setItems(cartItems || []);
     } catch (err) {
       setError(err.message);
@@ -29,7 +30,7 @@ export const CheckoutProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [accountId]);
 
   useEffect(() => {
     fetchCart();
@@ -56,6 +57,7 @@ export const CheckoutProvider = ({ children }) => {
         quantity: item.quantity,
       })),
     };
+    console.log(payload)
 
     try {
       // 2. Gọi API từ orderAPI.js

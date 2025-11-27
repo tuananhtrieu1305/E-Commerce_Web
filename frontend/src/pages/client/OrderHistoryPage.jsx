@@ -10,8 +10,7 @@ export default function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = getUserId() || 1;
+  const userId = localStorage.getItem("account_id")
 
   useEffect(() => {
     const fetchOrders = async () => {

@@ -12,7 +12,7 @@ export function CartProvider({ children }) {
     const debounceTimerRef = useRef(null);
 
 
-    const userId = getUserId() || 1;
+    const userId = localStorage.getItem("account_id")
 
     // Định dạng tiền tệ
     const formatCurrency = (amount) => {
