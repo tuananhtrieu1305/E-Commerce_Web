@@ -24,3 +24,13 @@ export const createListProducts = (payload) => {
   const url = "/api/product/batch";
   return axios.post(url, payload);
 };
+
+export const getTopBuyerProduct = () => {
+  const url = "/api/product/top-buyer";
+  return axios.get(url);
+};
+
+export const getTopRatedProduct = () => {
+  const url = "/api/product/top-rated";
+  return axios.get(url);
+};

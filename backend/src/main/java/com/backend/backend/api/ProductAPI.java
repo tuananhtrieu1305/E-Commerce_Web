@@ -32,6 +32,21 @@ public class ProductAPI {
         return ResponseEntity.ok(ApiResponse.success(products, "Get Products succeeded!"));
     }
 
+    @GetMapping("/top-buyer")
+    public ResponseEntity<List<ProductDTO>> getTopBestSellerProducts(
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        List<ProductDTO> result = productService.getTopBestSellerProducts(limit);
+        return ResponseEntity.ok(result);
+    }   
+    @GetMapping("/top-rated")
+    public ResponseEntity<List<ProductDTO>> getTopRatedProducts(
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        List<ProductDTO> result = productService.getTopRatedProducts(limit);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<ProductDTO>> createProduct(@RequestBody Map<String, Object> body) {
         ProductDTO newProduct = productService.createProduct(body);
@@ -57,4 +72,5 @@ public class ProductAPI {
         productService.deleteProduct(id);
         return ResponseEntity.ok(ApiResponse.success("Delete product succeeded!"));
     }
+
 }

@@ -1,9 +1,9 @@
 package com.backend.backend.model.product;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class ProductDTO {
     private Integer id;

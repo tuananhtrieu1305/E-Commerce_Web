@@ -45,7 +45,8 @@ instance.interceptors.response.use(
       // 1. Xóa tất cả thông tin đăng nhập khỏi localStorage
       localStorage.removeItem("access_token");
       localStorage.removeItem("user_role");
-      localStorage.removeItem("user_details");
+      localStorage.removeItem("user");
+      localStorage.removeItem("user_role");
 
       // 2. Hiển thị thông báo cho người dùng
       message.error("Your session has expired. Please log in again.");

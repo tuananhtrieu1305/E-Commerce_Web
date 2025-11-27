@@ -12,4 +12,6 @@ public interface ProductService {
     void deleteProduct(Integer id);
     List<ProductDTO> createListProducts(List<Map<String, Object>> bodyList);
     List<ProductDTO> searchProductsForChatbot(Map<String, Object> aiParams);
+    List<ProductDTO> getTopBestSellerProducts(int limit) ;
+    List<ProductDTO> getTopRatedProducts(int limit);
 }

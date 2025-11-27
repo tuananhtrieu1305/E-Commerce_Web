@@ -22,6 +22,9 @@ const LoginPage = () => {
         content: res.message,
       });
       form.resetFields();
+
+      localStorage.setItem("user", JSON.stringify(res.data.userDetails));
+
       localStorage.setItem("access_token", res.data.token);
       localStorage.setItem("user_role", res.data.userDetails.role);
       localStorage.setItem("user_id", res.data.userDetails.profile.id);// thanhtoan

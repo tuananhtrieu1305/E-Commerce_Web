@@ -85,8 +85,17 @@ public class SecurityConfig {
                         .requestMatchers("/api/chatbot/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
 
+                        .requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html"
+                        ).permitAll()
+                        .requestMatchers("/api/comments/**").permitAll()
+        
+                    
                         // Tất cả các request còn lại đều phải được xác thực
                         .anyRequest().authenticated()
+
                 )
 
                 // Cấu hình quản lý session: Không tạo session, dùng JWT (STATELESS)

@@ -25,6 +25,10 @@ import PaymentReturnPage from "./pages/checkout/PaymentReturnPage.jsx";
 import OrderHistoryPage from './pages/client/OrderHistoryPage.jsx';
 import OrderDetailPage from './pages/client/OrderDetailPage.jsx';
 import '@ant-design/v5-patch-for-react-19';
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProductsPage from "./pages/client/ProductsPage.jsx";
+import ProductDetailPage from "./pages/client/ProductDetailPage.jsx";
+import ProfileUpdate from "./pages/client/ProfileUpdatePage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -68,6 +72,17 @@ const router = createBrowserRouter([
           </CheckoutProvider>
         ),
       }
+       ,{ path: "/products",
+        element: <ProductsPage />,
+      },
+      {
+        path: "/products/:id",
+        element: <ProductDetailPage />,
+      },
+      {
+        path: "/update-user",
+        element: <ProfileUpdate />,
+      },
     ],
   },
   {
