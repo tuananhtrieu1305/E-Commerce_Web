@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-// ========== COMPONENTS ==========
 export function Banner({
   banner,
   currentIndex,
@@ -9,45 +9,62 @@ export function Banner({
   onNext,
   onIndicatorClick,
 }) {
-  return (
-    // LỚP NGOÀI: full màn hình, dùng relative cho các nút
-    <div className="relative w-full h-full z-10">
-      {/* LỚP TRONG: giới hạn max-w-7xl, căn giữa nội dung */}
-      <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between">
-        <div className="flex-1 pt-32">
-          <h1 className="text-6xl font-bold text-white mb-4">{banner.title}</h1>
-          <p className="text-white/70 mb-8 text-lg max-w-xl">
-            {banner.subtitle}
-          </p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition">
-            Discover more
-          </button>
-        </div>
+  const navigate = useNavigate();
 
-        <div className="text-9xl opacity-20">🎧</div>
+  const handleBannerClick = () => {
+    if (banner.productId) navigate(`/products/${banner.productId}`);
+  };
+
+  return (
+    <div
+      className="relative w-full h-full z-10 cursor-pointer"
+      onClick={handleBannerClick}
+    >
+      {/* Ảnh Banner full size */}
+      <div className="w-full h-full overflow-hidden rounded-2xl">
+        <img
+          src={
+            banner.image
+              ? banner.image
+              : "https://happyphone.vn/wp-content/uploads/2025/09/iPhone-17-Pro-va-iPhone-17-Pro-Max-chinh-thuc-ra-mat-co-gi-moi.jpg"
+          }
+          alt="banner"
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      {/* Banner Controls: BÁM THEO MÉP MÀN HÌNH */}
+      {/* Controls */}
       <button
-        onClick={onPrev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur hover:bg-white/30 rounded-full p-3 transition z-20 border border-white/20"
+        onClick={(e) => {
+          e.stopPropagation();
+          onPrev();
+        }}
+        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur 
+        hover:bg-white/30 rounded-full p-3 transition z-20 border border-white/20"
       >
         <ChevronLeft size={28} className="text-white" />
       </button>
 
       <button
-        onClick={onNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur hover:bg-white/30 rounded-full p-3 transition z-20 border border-white/20"
+        onClick={(e) => {
+          e.stopPropagation();
+          onNext();
+        }}
+        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur 
+        hover:bg-white/30 rounded-full p-3 transition z-20 border border-white/20"
       >
         <ChevronRight size={28} className="text-white" />
       </button>
 
-      {/* Indicators: vẫn bám full width */}
+      {/* Indicators */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
         {Array.from({ length: totalBanners }).map((_, idx) => (
           <button
             key={idx}
-            onClick={() => onIndicatorClick(idx)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onIndicatorClick(idx);
+            }}
             className={`h-2 rounded-full transition ${
               idx === currentIndex ? "bg-white w-8" : "bg-white/40 w-2"
             }`}

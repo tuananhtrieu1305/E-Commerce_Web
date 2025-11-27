@@ -63,22 +63,19 @@ export default function Home() {
   }
   const banners = [
     {
-      title: "Introducing the Next Generation of Sound",
-      subtitle: "Experience immersive sound like before",
-      color: "from-slate-700 via-slate-600 to-slate-800",
-      bgPattern: "bg-gradient-to-br",
+      productId: 1,
+      image:
+        "https://www.didongmy.com/vnt_upload/weblink/iphone-17-series-didongmy-banner.jpg",
     },
     {
-      title: "Laptop Performance Redefined",
-      subtitle: "Powerful computing for professionals",
-      color: "from-blue-700 via-slate-600 to-slate-800",
-      bgPattern: "bg-gradient-to-br",
+      productId: 2,
+      image:
+        "https://hdradio.vn/upload/hinhanh/tai-nghe/Sony/WH-XB900N/tai-nghe-sony-wh-xb900n-3.jpg",
     },
     {
-      title: "Innovation Meets Design",
-      subtitle: "Latest tech gadgets awaits you",
-      color: "from-purple-700 via-slate-600 to-slate-800",
-      bgPattern: "bg-gradient-to-br",
+      productId: 3,
+      image:
+        "https://vb.1cdn.vn/2025/09/08/static-images.vnncdn.net-vps_images_publish-000001-000003-2025-9-8-_iphone-17-pro-max-12-zee-tech-343.png",
     },
   ];
 
@@ -205,11 +202,6 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <div className="relative w-full h-screen overflow-hidden">
-        {/* Banner Background */}
-        <div
-          className={`absolute inset-0 ${banners[currentBanner].bgPattern} ${banners[currentBanner].color}`}
-        ></div>
-
         {/* Header */}
         <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 

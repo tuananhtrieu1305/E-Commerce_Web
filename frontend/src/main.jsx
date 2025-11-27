@@ -19,6 +19,7 @@ import enUS from "antd/locale/en_US";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ProductsPage from "./pages/client/ProductsPage.jsx";
 import ProductDetailPage from "./pages/client/ProductDetailPage.jsx";
+import ProfileUpdate from "./pages/client/ProfileUpdatePage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: <ProductDetailPage />,
+      },
+      {
+        path: "/update-user",
+        element: <ProfileUpdate />,
       },
     ],
   },
