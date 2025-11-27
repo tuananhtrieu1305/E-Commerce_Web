@@ -24,6 +24,7 @@ const LoginPage = () => {
       form.resetFields();
       localStorage.setItem("access_token", res.data.token);
       localStorage.setItem("user_role", res.data.userDetails.role);
+      localStorage.setItem("user_id", res.data.userDetails.id);
       navigate("/");
     } else {
       messageApi.open({
