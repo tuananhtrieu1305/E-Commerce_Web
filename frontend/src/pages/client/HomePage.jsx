@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import {
   Smartphone,
+  Laptop,
+  TabletSmartphone,
+  Headphones,
+  Volume2,
+  Watch,
+  Camera,
+  Tv,
+  Refrigerator,
+  WashingMachine,
+  Snowflake,
+  Gamepad2,
   Book,
   Shirt,
   Dumbbell,
   GraduationCap,
-  Headphones,
-  Gamepad2,
-  Plane,
   Backpack,
   Armchair,
 } from "lucide-react";
@@ -24,7 +32,7 @@ import { getCategoryWithProduct } from "../../services/CategoryAPI";
 import BannerImg1 from "../../assets/banner/banner1.png";
 import BannerImg2 from "../../assets/banner/banner2.png";
 import BannerImg3 from "../../assets/banner/banner3.png";
-
+import BannerImg4 from "../../assets/banner/banner4.png";
 export default function Home() {
   const [currentBanner, setCurrentBanner] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,8 +47,42 @@ export default function Home() {
 
   function getIconComponent(categoryName) {
     switch (categoryName) {
-      case "Electronics":
+      case "Điện Thoại":
         return Smartphone;
+
+      case "Laptop":
+        return Laptop;
+
+      case "Tablet":
+        return TabletSmartphone;
+
+      case "Tai Nghe":
+        return Headphones;
+
+      case "Loa":
+        return Volume2;
+
+      case "Đồng Hồ":
+        return Watch;
+
+      case "Máy Ảnh":
+        return Camera;
+
+      case "TV":
+        return Tv;
+
+      case "Tủ Lạnh":
+        return Refrigerator;
+
+      case "Máy Giặt":
+        return WashingMachine;
+
+      case "Điều Hòa":
+        return Snowflake;
+
+      // fallback bổ sung
+      case "Gaming":
+        return Gamepad2;
       case "Books":
         return Book;
       case "Fashion":
@@ -49,25 +91,19 @@ export default function Home() {
         return Dumbbell;
       case "Education":
         return GraduationCap;
-      case "Audio":
-        return Headphones;
-      case "Gaming":
-        return Gamepad2;
-      case "Travel":
-        return Plane;
       case "Accessories":
         return Backpack;
       case "Furniture":
         return Armchair;
 
       default:
-        return Smartphone; // fallback
+        return Smartphone;
     }
   }
   const banners = [
     {
       productId: 1,
-      image: BannerImg1,
+      image: BannerImg4,
     },
     {
       productId: 2,
@@ -76,6 +112,10 @@ export default function Home() {
     {
       productId: 3,
       image: BannerImg3,
+    },
+    {
+      productId: 4,
+      image: BannerImg1,
     },
   ];
 

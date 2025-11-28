@@ -1,8 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useCart } from '../../context/CartContext.jsx';
-import { Empty, Button, Spin, message } from 'antd'; // Nhớ import message từ antd
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'; // Thêm useNavigate
-import { ShoppingCart, Trash2, Plus, Minus, Package, Shield, TrendingUp, Gift, ArrowLeft } from 'lucide-react'; // Thêm ArrowLeft
+import React, { useState, useEffect } from "react";
+import { useCart } from "../../context/CartContext.jsx";
+import { Empty, Button, Spin, message } from "antd"; // Nhớ import message từ antd
+import { Link, useSearchParams, useNavigate } from "react-router-dom"; // Thêm useNavigate
+import {
+  ShoppingCart,
+  Trash2,
+  Plus,
+  Minus,
+  Package,
+  Shield,
+  TrendingUp,
+  Gift,
+  ArrowLeft,
+} from "lucide-react"; // Thêm ArrowLeft
 
 export default function CartPage() {
   const {
@@ -18,20 +28,22 @@ export default function CartPage() {
   } = useCart();
 
   const navigate = useNavigate(); // Hook chuyển trang
-  const [selectedItems, setSelectedItems] = useState(items.map(i => i.id));
+  const [selectedItems, setSelectedItems] = useState(items.map((i) => i.id));
   const isSelected = (id) => selectedItems.includes(id);
   const [searchParams] = useSearchParams();
 
   // Load lại dữ liệu mỗi khi vào trang
   useEffect(() => {
-    fetchCart(); 
+    fetchCart();
   }, []);
 
   // Logic chọn sản phẩm từ URL (Mua ngay)
   useEffect(() => {
-    const buyNowId = searchParams.get('buy_now');
+    const buyNowId = searchParams.get("buy_now");
     if (buyNowId && items.length > 0) {
-      const targetItem = items.find(item => item.productId === Number(buyNowId));
+      const targetItem = items.find(
+        (item) => item.productId === Number(buyNowId)
+      );
       if (targetItem) {
         setSelectedItems([targetItem.id]);
       }
@@ -58,12 +70,12 @@ export default function CartPage() {
     if (quantity < 1) quantity = 1;
     if (quantity > 99) {
       quantity = 99;
-      message.warning('Số lượng tối đa là 99');
+      message.warning("Số lượng tối đa là 99");
     }
     // Check tồn kho (nếu item có trường stock)
     if (item.stock && quantity > item.stock) {
-        message.warning(`Kho chỉ còn ${item.stock} sản phẩm!`);
-        quantity = item.stock;
+      message.warning(`Kho chỉ còn ${item.stock} sản phẩm!`);
+      quantity = item.stock;
     }
     if (quantity !== item.quantity) {
       setItemQuantity(item.productId, quantity);
@@ -80,7 +92,9 @@ export default function CartPage() {
           </div>
           <Empty description="Giỏ hàng của bạn đang rỗng" />
           <Link to="/">
-             <Button type="primary" className="mt-4 bg-blue-600">Tiếp tục mua sắm</Button>
+            <Button type="primary" className="mt-4 bg-blue-600">
+              Tiếp tục mua sắm
+            </Button>
           </Link>
         </div>
       </div>
@@ -89,15 +103,13 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 pb-20">
-      
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex items-center justify-between">
-            
             <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate('/')}
+              <button
+                onClick={() => navigate("/")}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors group"
                 title="Trở về trang chủ"
               >
@@ -116,10 +128,12 @@ export default function CartPage() {
             </div>
 
             {/* Nút Tiếp tục mua sắm (phụ) bên phải cho tiện */}
-            <Link to="/" className="hidden sm:block text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
+            <Link
+              to="/"
+              className="hidden sm:block text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
+            >
               Tiếp tục mua sắm
             </Link>
-
           </div>
         </div>
       </div>
@@ -134,17 +148,21 @@ export default function CartPage() {
               </div>
               <div>
                 <p className="text-xs text-gray-500">Miễn phí vận chuyển</p>
-                <p className="text-sm font-semibold text-gray-800">Đơn từ 500k</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  Đơn từ 500k
+                </p>
               </div>
             </div>
             {/* ... các feature khác giữ nguyên ... */}
-             <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
+            <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
               <div className="p-2 bg-green-100 rounded-lg">
                 <Shield className="w-5 h-5 text-green-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-500">Thanh toán</p>
-                <p className="text-sm font-semibold text-gray-800">100% an toàn</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  100% an toàn
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
@@ -183,15 +201,19 @@ export default function CartPage() {
               Chọn tất cả ({selectedItems.length}/{items.length} sản phẩm)
             </span>
           </label>
-          
+
           {/* Nút xóa đã chọn */}
           {selectedItems.length > 0 && (
-             <Button type="link" danger onClick={() => {
-                 // Logic xóa nhiều (nếu có API)
-                 // selectedItems.forEach(id => removeItem(items.find(i => i.id === id).productId));
-             }}>
-                Xóa đã chọn ({selectedItems.length})
-             </Button>
+            <Button
+              type="link"
+              danger
+              onClick={() => {
+                // Logic xóa nhiều (nếu có API)
+                // selectedItems.forEach(id => removeItem(items.find(i => i.id === id).productId));
+              }}
+            >
+              Xóa đã chọn ({selectedItems.length})
+            </Button>
           )}
         </div>
 
@@ -203,7 +225,7 @@ export default function CartPage() {
                 key={item.id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group"
                 style={{
-                  animation: `slideIn 0.3s ease-out ${index * 0.1}s both`
+                  animation: `slideIn 0.3s ease-out ${index * 0.1}s both`,
                 }}
               >
                 <div className="p-6">
@@ -222,7 +244,9 @@ export default function CartPage() {
                     <div className="flex-shrink-0">
                       <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 group-hover:scale-105 transition-transform duration-300">
                         <img
-                          src={item.image ? item.image : "https://placehold.co/100x100/e2e8f0/cbd5e0?text=No+Image"}
+                          src={`${import.meta.env.VITE_BACKEND_URL}${
+                            item.image
+                          }`}
                           alt={`Ảnh sản phẩm ${item.productId}`}
                           className="w-full h-full object-cover"
                         />
@@ -239,7 +263,10 @@ export default function CartPage() {
                       </p>
                       <div className="flex items-center gap-4">
                         <span className="text-sm text-gray-600">
-                          Đơn giá: <span className="font-semibold text-gray-800">{formatCurrency(item.unitPrice)}</span>
+                          Đơn giá:{" "}
+                          <span className="font-semibold text-gray-800">
+                            {formatCurrency(item.unitPrice)}
+                          </span>
                         </span>
                         <Button
                           type="link"
@@ -258,7 +285,9 @@ export default function CartPage() {
                     <div className="flex flex-col items-end justify-between">
                       <div className="flex items-center gap-2 bg-gray-50 rounded-xl p-1 border border-gray-200">
                         <button
-                          onClick={() => handleQuantityChange(item, item.quantity - 1)}
+                          onClick={() =>
+                            handleQuantityChange(item, item.quantity - 1)
+                          }
                           disabled={item.quantity <= 1 || loading}
                           className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
@@ -269,12 +298,16 @@ export default function CartPage() {
                           value={item.quantity}
                           min="1"
                           max="99"
-                          onChange={(e) => handleQuantityChange(item, e.target.value)}
+                          onChange={(e) =>
+                            handleQuantityChange(item, e.target.value)
+                          }
                           disabled={loading}
                           className="w-12 text-center font-semibold text-gray-800 bg-transparent focus:outline-none border-0"
                         />
                         <button
-                          onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                          onClick={() =>
+                            handleQuantityChange(item, item.quantity + 1)
+                          }
                           disabled={item.quantity >= 99 || loading}
                           className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
@@ -299,21 +332,27 @@ export default function CartPage() {
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
                 <h2 className="text-xl font-bold text-white">Tổng đơn hàng</h2>
               </div>
-              
+
               <div className="p-6 space-y-4">
                 <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-                  <span className="text-gray-600">Tổng ({selectedItems.length} sản phẩm)</span>
+                  <span className="text-gray-600">
+                    Tổng ({selectedItems.length} sản phẩm)
+                  </span>
                   <span className="text-lg font-semibold text-gray-800">
                     {formatCurrency(
-                      items.filter((i) => isSelected(i.id)).reduce((acc, i) => acc + i.lineTotal, 0)
+                      items
+                        .filter((i) => isSelected(i.id))
+                        .reduce((acc, i) => acc + i.lineTotal, 0)
                     )}
                   </span>
                 </div>
 
-                <Link to={`/checkout?selected=${items
-                  .filter(i => selectedItems.includes(i.id))
-                  .map(i => i.productId)
-                  .join(',')}`}>
+                <Link
+                  to={`/checkout?selected=${items
+                    .filter((i) => selectedItems.includes(i.id))
+                    .map((i) => i.productId)
+                    .join(",")}`}
+                >
                   <Button
                     type="primary"
                     size="large"
