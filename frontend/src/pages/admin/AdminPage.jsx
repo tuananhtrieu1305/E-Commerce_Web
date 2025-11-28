@@ -142,7 +142,9 @@ const AdminPage = () => {
           {collapsed ? (
             <img src={Logo_Icon} alt="Icon" className="h-8" />
           ) : (
-            <Logo theme={"dark"} />
+            <div className="text-2xl font-bold text-white whitespace-nowrap cursor-pointer">
+              NEXTPICK
+            </div>
           )}
         </div>
         <Menu

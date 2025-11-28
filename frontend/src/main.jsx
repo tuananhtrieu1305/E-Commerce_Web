@@ -3,8 +3,6 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import BookPage from "./pages/client/BookPage.jsx";
-import AboutPage from "./pages/client/AboutPage.jsx";
 import HomePage from "./pages/client/HomePage.jsx";
 import LoginPage from "./pages/auth/LoginPage.jsx";
 import RegisterPage from "./pages/auth/RegisterPage.jsx";
@@ -37,14 +35,7 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
-      {
-        path: "/book",
-        element: <BookPage />,
-      },
-      {
-        path: "/about",
-        element: <AboutPage />,
-      },
+
       {
         path: "/cart",
         element: <CartPage />,

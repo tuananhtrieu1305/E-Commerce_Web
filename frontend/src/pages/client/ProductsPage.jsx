@@ -153,10 +153,6 @@ export default function ProductsPage() {
     navigate("/products"); // xoá hết query
   };
 
-  const handleProductClick = (id) => {
-    navigate(`/products/${id}`);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#112D60] via-[#2F446A] to-[#B6C0C5]">
       <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
@@ -215,13 +211,7 @@ export default function ProductsPage() {
                     stock={product.stock}
                     categoryName={product.category?.cate_name}
                     sellerName={product.seller?.seller_name}
-                    imageUrl={
-                      product.imagePaths?.[0]?.image_path
-                        ? `${import.meta.env.VITE_BACKEND_URL}${
-                            product.imagePaths[0].image_path
-                          }`
-                        : null
-                    }
+                    imageUrl={product.imagePaths[0].image_path}
                   />
                 ))}
               </div>

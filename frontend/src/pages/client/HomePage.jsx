@@ -21,7 +21,10 @@ import { Taskbar } from "../../components/home/Taskbar";
 import { useNavigate } from "react-router-dom";
 import { getProduct } from "../../services/ProductAPI";
 import { getCategoryWithProduct } from "../../services/CategoryAPI";
-import ICON_MAP from "../../hooks/icon_map";
+import BannerImg1 from "../../assets/banner/banner1.png";
+import BannerImg2 from "../../assets/banner/banner2.png";
+import BannerImg3 from "../../assets/banner/banner3.png";
+
 export default function Home() {
   const [currentBanner, setCurrentBanner] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,18 +67,15 @@ export default function Home() {
   const banners = [
     {
       productId: 1,
-      image:
-        "https://www.didongmy.com/vnt_upload/weblink/iphone-17-series-didongmy-banner.jpg",
+      image: BannerImg1,
     },
     {
       productId: 2,
-      image:
-        "https://hdradio.vn/upload/hinhanh/tai-nghe/Sony/WH-XB900N/tai-nghe-sony-wh-xb900n-3.jpg",
+      image: BannerImg2,
     },
     {
       productId: 3,
-      image:
-        "https://vb.1cdn.vn/2025/09/08/static-images.vnncdn.net-vps_images_publish-000001-000003-2025-9-8-_iphone-17-pro-max-12-zee-tech-343.png",
+      image: BannerImg3,
     },
   ];
 
@@ -121,6 +121,7 @@ export default function Home() {
         setCategoryError(null);
 
         const res = await fetch("http://localhost:8081/api/category");
+        console.log(res);
 
         if (!res.ok) {
           throw new Error(`Failed to fetch categories: ${res.status}`);
@@ -197,6 +198,7 @@ export default function Home() {
   };
 
   // ... các import & state y như bạn đang có ở trên
+  console.log(categories);
 
   return (
     <div className="min-h-screen bg-slate-50">

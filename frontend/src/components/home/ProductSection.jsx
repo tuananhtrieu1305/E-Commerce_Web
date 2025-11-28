@@ -151,7 +151,7 @@ export function ProductSection({
                   reviewCount={product.reviewCount || 0}
                   categoryName={product.category?.cate_name || "Khác"}
                   productInfo={product.productInfo}
-                  imagePaths={product.imagePaths}
+                  imageUrl={product.imagePaths[0].image_path}
                   sellerName={product.seller.seller_name}
                   stock={product.stock}
                 />

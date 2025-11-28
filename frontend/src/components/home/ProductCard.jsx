@@ -68,7 +68,7 @@ export default function ProductCard({
         <div className="absolute inset-0 bg-gradient-to-br from-slate-100/40 to-transparent backdrop-blur-sm" />
         {imageUrl ? (
           <img
-            src={imageUrl}
+            src={`${import.meta.env.VITE_BACKEND_URL}${imageUrl}`}
             alt={title}
             className="relative w-full h-full object-cover"
           />

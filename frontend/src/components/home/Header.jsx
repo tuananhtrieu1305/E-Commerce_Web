@@ -81,11 +81,6 @@ export function Header({ searchQuery, onSearchChange }) {
               </>
             ) : (
               <>
-                <Heart
-                  size={24}
-                  className="cursor-pointer hover:text-red-200 transition"
-                />
-
                 {/* User + Dropdown */}
                 <div className="relative" ref={userMenuRef}>
                   <User
@@ -105,15 +100,29 @@ export function Header({ searchQuery, onSearchChange }) {
                       >
                         Thông tin cá nhân
                       </button>
-                      <button
-                        onClick={() => {
-                          navigate("/profile/orders"); 
-                          setIsUserMenuOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-slate-100"
-                      >
-                        Đơn hàng của tôi
-                      </button>
+                      {JSON.parse(localStorage.getItem("user")).role ===
+                      "ADMIN" ? (
+                        <button
+                          onClick={() => {
+                            navigate("/admin");
+                            setIsUserMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-100"
+                        >
+                          Trang Admin
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            navigate("/profile/orders");
+                            setIsUserMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-100"
+                        >
+                          Đơn hàng của tôi
+                        </button>
+                      )}
+
                       <div className="h-px bg-slate-200 my-1" />
                       <button
                         onClick={handleLogout}

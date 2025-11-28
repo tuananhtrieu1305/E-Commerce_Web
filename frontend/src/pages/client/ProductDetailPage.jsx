@@ -152,13 +152,11 @@ export default function ProductDetailPage() {
       fetchProduct();
     }
   }, [id]);
-  const userId = localStorage.getItem("user_id")
+  const userId = localStorage.getItem("user_id");
   const handleAddToCart = async () => {
     if (!product?.id) return;
     if (addingToCart) return; // Chặn spam click
 
-   
-    
     if (!userId) {
       messageApi.open({
         type: "error",
@@ -174,12 +172,11 @@ export default function ProductDetailPage() {
       await apiAddItem(Number(userId), product.id, quantity);
       setAddedToCart(true);
       setTimeout(() => setAddedToCart(false), 1500);
-      
+
       messageApi.open({
         type: "success",
         content: "Đã thêm sản phẩm vào giỏ hàng!",
       });
-
     } catch (err) {
       console.error(err);
       messageApi.open({
@@ -205,9 +202,9 @@ export default function ProductDetailPage() {
     try {
       // Hiện loading nhẹ
       messageApi.open({
-        key: 'buy_now',
-        type: 'loading',
-        content: 'Đang xử lý...',
+        key: "buy_now",
+        type: "loading",
+        content: "Đang xử lý...",
         duration: 0,
       });
 
@@ -215,12 +212,11 @@ export default function ProductDetailPage() {
       await apiAddItem(Number(userId), product.id, quantity);
 
       // 4. Chuyển hướng sang trang Cart kèm tham số "buy_now"
-      messageApi.destroy('buy_now'); // Tắt loading
+      messageApi.destroy("buy_now"); // Tắt loading
       navigate(`/cart?buy_now=${product.id}`);
-
     } catch (err) {
       console.error(err);
-      messageApi.destroy('buy_now');
+      messageApi.destroy("buy_now");
       messageApi.open({
         type: "error",
         content: "Lỗi hệ thống. Vui lòng thử lại.",
@@ -442,18 +438,6 @@ export default function ProductDetailPage() {
                       >
                         <CreditCard size={20} />
                         Mua ngay
-                      </button>
-                    </div>
-
-                    {/* Additional Actions */}
-                    <div className="flex gap-3">
-                      <button className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl transition border border-white/20">
-                        <Heart size={18} />
-                        Yêu thích
-                      </button>
-                      <button className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl transition border border-white/20">
-                        <Share2 size={18} />
-                        Chia sẻ
                       </button>
                     </div>
                   </div>
