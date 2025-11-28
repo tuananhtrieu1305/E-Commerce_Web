@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,9 +59,29 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getOrder(Map<String, Object> params) {
+        if (params.containsKey("customer_id")) {
+            try {
+                // Chuyển đổi an toàn sang số
+                String userIdStr = String.valueOf(params.get("customer_id"));
+
+                if (userIdStr != null && !userIdStr.equals("null") && !userIdStr.isEmpty()) {
+                    Integer userId = Integer.parseInt(userIdStr);
+
+                    // Gọi hàm tìm kiếm trực tiếp (Bỏ qua SearchBuilder)
+                    List<OrderEntity> userOrders = orderRepository.findByUserId(
+                            userId,
+                            Sort.by(Sort.Direction.DESC, "id") // Mới nhất lên đầu
+                    );
+
+                    return orderDTOConverter.toOrderDTOList(userOrders);
+                }
+            } catch (Exception e) {
+                // Nếu lỗi thì bỏ qua
+            }
+        }
         OrderSearchBuilder orderSearchBuilder = orderSearchBuilderConverter.paramsToBuilder(params);
         Specification<OrderEntity> spec = OrderSpecification.findByCriteria(orderSearchBuilder);
-        List<OrderEntity> entities = orderRepository.findAll(spec);
+        List<OrderEntity> entities = orderRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "id"));
         return orderDTOConverter.toOrderDTOList(entities);}
    
 

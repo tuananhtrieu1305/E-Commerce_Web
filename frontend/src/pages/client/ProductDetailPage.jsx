@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/home/Header";
 import {
   Star,
@@ -18,7 +19,7 @@ import {
 import { useParams } from "react-router-dom";
 import { message } from "antd";
 import ProductReviews from "../../components/product/ProductReview";
-
+import { apiAddItem } from "../../services/cartService";
 // Mock template cho product (dùng làm default + bổ sung field không có trong BE)
 const mockProductTemplate = {
   id: null,
@@ -86,6 +87,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const navigate = useNavigate();
   // Format giá VND
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -150,13 +152,13 @@ export default function ProductDetailPage() {
       fetchProduct();
     }
   }, [id]);
-
+  const userId = localStorage.getItem("user_id")
   const handleAddToCart = async () => {
     if (!product?.id) return;
-    if (addingToCart) return; // tránh spam click
+    if (addingToCart) return; // Chặn spam click
 
-    // 👇 ví dụ: lấy userId từ localStorage (m sửa theo cách m lưu)
-    const userId = localStorage.getItem("userId");
+   
+    
     if (!userId) {
       messageApi.open({
         type: "error",
@@ -169,42 +171,61 @@ export default function ProductDetailPage() {
       setAddingToCart(true);
       setAddedToCart(false);
 
-      const res = await fetch("http://localhost:8081/api/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: Number(userId),
-          productId: product.id,
-          quantity,
-        }),
+      await apiAddItem(Number(userId), product.id, quantity);
+      setAddedToCart(true);
+      setTimeout(() => setAddedToCart(false), 1500);
+      
+      messageApi.open({
+        type: "success",
+        content: "Đã thêm sản phẩm vào giỏ hàng!",
       });
 
-      if (!res.ok) {
-        throw new Error(`Thêm vào giỏ thất bại: ${res.status}`);
-      }
-
-      // ✅ thành công
-      setAddedToCart(true);
-      // tự tắt trạng thái “đã thêm” sau 1.5s
-      setTimeout(() => setAddedToCart(false), 1500);
     } catch (err) {
       console.error(err);
       messageApi.open({
         type: "error",
-        content: "Không thể thêm vào giỏ hàng. Vui lòng thử lại.",
+        content: "Lỗi thêm giỏ hàng. Vui lòng thử lại.",
       });
     } finally {
       setAddingToCart(false);
     }
   };
 
-  const handleBuyNow = () => {
-    messageApi.open({
-      type: "info",
-      content: `Mua ngay ${quantity} sản phẩm`,
-    });
+  const handleBuyNow = async () => {
+    if (!product?.id) return;
+
+    if (!userId) {
+      messageApi.open({
+        type: "error",
+        content: "Bạn cần đăng nhập để mua hàng.",
+      });
+      return;
+    }
+
+    try {
+      // Hiện loading nhẹ
+      messageApi.open({
+        key: 'buy_now',
+        type: 'loading',
+        content: 'Đang xử lý...',
+        duration: 0,
+      });
+
+      // 2. Gọi API thêm vào giỏ (Giống hệt logic thêm giỏ hàng)
+      await apiAddItem(Number(userId), product.id, quantity);
+
+      // 4. Chuyển hướng sang trang Cart kèm tham số "buy_now"
+      messageApi.destroy('buy_now'); // Tắt loading
+      navigate(`/cart?buy_now=${product.id}`);
+
+    } catch (err) {
+      console.error(err);
+      messageApi.destroy('buy_now');
+      messageApi.open({
+        type: "error",
+        content: "Lỗi hệ thống. Vui lòng thử lại.",
+      });
+    }
   };
 
   // Chuẩn bị mảng ảnh hiển thị

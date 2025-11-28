@@ -39,7 +39,7 @@ public class PaymentServiceImpl implements PaymentService {
         OrderEntity order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        long amount = order.getTotal_cost() * 100;
+        long amount = order.getTotal_cost() * 100L;
         String ip = request.getRemoteAddr();
 
 

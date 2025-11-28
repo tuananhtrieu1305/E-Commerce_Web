@@ -22,7 +22,7 @@ export const CheckoutProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const cartItems = await getCart(accountId);
+      const cartItems = await getCart(userId);
       setItems(cartItems || []);
     } catch (err) {
       setError(err.message);
@@ -30,7 +30,7 @@ export const CheckoutProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [accountId]);
+  }, [userId]);
 
   useEffect(() => {
     fetchCart();

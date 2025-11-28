@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { login } from "../../services/AuthAPI";
-
+import { useCart } from "../../context/CartContext";
 const LoginPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { fetchCart } = useCart();
 
   const onFinish = async (values) => {
     console.log("Success:", values);
@@ -29,6 +30,7 @@ const LoginPage = () => {
       localStorage.setItem("user_role", res.data.userDetails.role);
       localStorage.setItem("user_id", res.data.userDetails.profile.id); // thanhtoan
       localStorage.setItem("account_id", res.data.userDetails.id); //cart
+      await fetchCart();
       navigate("/");
     } else {
       messageApi.open({

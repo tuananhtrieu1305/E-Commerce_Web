@@ -107,7 +107,7 @@ export function Header({ searchQuery, onSearchChange }) {
                       </button>
                       <button
                         onClick={() => {
-                          navigate("/orders"); // đổi path nếu backend bạn khác
+                          navigate("/profile/orders"); 
                           setIsUserMenuOpen(false);
                         }}
                         className="w-full text-left px-4 py-2 hover:bg-slate-100"

@@ -3,6 +3,7 @@ package com.backend.backend.repository.order;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer>, Jp
             "WHERE o.user.id IN :userIds " +
             "GROUP BY o.user.id")
     List<OrderStatsDTO> findOrderStatsByUserIds(@Param("userIds") Set<Integer> userIds);
+    List<OrderEntity> findByUserId(Integer userId, Sort sort);
 }

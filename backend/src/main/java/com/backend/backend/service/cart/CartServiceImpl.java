@@ -95,7 +95,9 @@ public class CartServiceImpl implements CartService {
 
         ProductEntity product = productRepo.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-
+        if (qty > product.getStock()) {
+            throw new IllegalStateException("Sản phẩm '" + product.getTitle() + "' chỉ còn lại " + product.getStock() + " cái trong kho.");
+        }
         BigDecimal price = BigDecimal.valueOf(product.getPrice());
         int pid = productId;
 
@@ -112,7 +114,7 @@ public class CartServiceImpl implements CartService {
                     return it;
                 });
 
-        item.setQuantity(item.getQuantity() + qty);
+        item.setQuantity(qty);
         item.setLineTotal(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
 
         reprice(cart);
@@ -129,6 +131,11 @@ public class CartServiceImpl implements CartService {
         CartItem item = itemRepo.findByCart_UserIdAndProductId(userId, productId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
         Cart cart = item.getCart();
+        ProductEntity product = productRepo.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        if (qty > product.getStock()) {
+            throw new IllegalStateException("Số lượng yêu cầu vượt quá tồn kho (Còn lại: " + product.getStock() + ")");
+        }
         if (qty == 0) {
             cart.getItems().remove(item);
         } else {
