@@ -1,79 +1,76 @@
-🛒 Tech Store Website
+# 🛒 Tech Store Website
 
-Website bán đồ công nghệ gồm 3 phần: Frontend (React + Vite), Backend (Spring Boot) và Database (MySQL).
+Website bán đồ công nghệ gồm ba thành phần: Frontend (React + Vite), Backend (Spring Boot) và Database (MySQL).
 
-📂 Cấu trúc dự án
+## 📂 Cấu trúc dự án
+
+
+```bash
 project-root/
-│── frontend/    # React + Vite
-│── backend/     # Spring Boot
-└── database/    # File database.sql
+|── frontend/    # React + Vite
+|── backend/     # Spring Boot
+└── database/    # Database script (.sql)
+```
 
-🚀 Hướng dẫn cài đặt & chạy dự án
-1️⃣ Clone dự án về máy
-git clone <URL-repository-của-bạn>
-cd project-root
+## 🚀 Hướng dẫn cài đặt
+1️⃣ Clone dự án
+```bash
+git clone https://github.com/tuananhtrieu1305/E-Commerce_Web.git
+```
+2️⃣ Cài đặt Ollama + Model phi3:mini
 
-2️⃣ Cài Ollama & tải model AI
+Cài Ollama tại: [Ollama](https://ollama.com/)
 
-Dự án sử dụng Ollama để hỗ trợ người dùng tìm kiếm sản phẩm.
-
-➤ Cài Ollama
-
-Tải tại: https://ollama.com/
-
-➤ Mở terminal và tải model phi3:mini
+Tải model:
+```bash
 ollama pull phi3:mini
+```
+3️⃣ Thiết lập MySQL Database
 
-3️⃣ Setup MySQL Database
-➤ Import database
+B1: Mở MySQL Workbench
 
-Mở MySQL Workbench
+B2: Chọn Server → Data Import
 
-Chọn Server → Data Import
-
-Import file:
-
+B3: Import file:
+```bash
 database/database.sql
-
-➤ Chạy MySQL trên cổng 80
-
-Đảm bảo MySQL đang chạy local và lắng nghe ở port 80.
+```
+B4: Đảm bảo MySQL chạy ở cổng 80 (localhost:80)
 
 4️⃣ Chạy Backend (Spring Boot)
-➤ Mở folder backend bằng IntelliJ IDEA (khuyến nghị)
+
+Mở thư mục backend
+```bash
 cd backend
+```
+Cài dependencies
 
-➤ Cài dependencies từ pom.xml
-
-IntelliJ sẽ tự động tải về, hoặc thủ công:
-
+IntelliJ IDEA sẽ tự tải, hoặc tự chạy:
+```bash
 mvn clean install
-
-➤ Cấu hình lại file application.properties.uat
-
-Sửa thông tin kết nối MySQL theo môi trường local, ví dụ:
-
-spring.datasource.url=jdbc:mysql://localhost:80/your_database_name
+```
+Cấu hình application.properties.uat
+```bash
+spring.datasource.url=jdbc:mysql://localhost:80/<database_name>
 spring.datasource.username=root
-spring.datasource.password=your_password
-
-➤ Chạy ứng dụng
+spring.datasource.password=<your_password>
+```
+Chạy project
 
 Chạy file:
-
+```bash
 src/main/java/.../ProjectApplication.java
-
-5️⃣ Chạy Frontend (ReactJS + Vite)
-➤ Vào thư mục frontend
+```
+5️⃣ Chạy Frontend (React + Vite)
+```bash
 cd ../frontend
-
-➤ Cài dependencies
 npm install
-
-➤ Chạy dự án
 npm run dev
+```
+## 🎉 Hoàn tất
 
+Dự án gồm frontend + backend + database + AI model đã chạy đầy đủ trên máy bạn.
 
+## ℹ️ Chi tiết dự án
 
-➡️ http://localhost:5173
- (mặc định của Vite)
+Chi tiết dự án vui lòng tham khảo trong báo cáo
