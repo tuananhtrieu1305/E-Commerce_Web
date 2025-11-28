@@ -76,7 +76,7 @@ const ChatbotFloat = () => {
           id: Date.now() + "-bot-products",
           sender: "bot",
           type: "products",
-          content: res.data, // Mảng các sản phẩm
+          content: res.data || "ko co sanpham nao ", // Mảng các sản phẩm
         };
         setMessages((prev) => [...prev, productMessage]);
       }

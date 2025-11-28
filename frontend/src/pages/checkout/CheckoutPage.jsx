@@ -310,7 +310,7 @@ export default function CheckoutPage() {
                     >
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
                         <img
-                          src={item.image ? item.image : "https://placehold.co/100x100/e2e8f0/cbd5e0?text=No+Img"}
+                          src={`${import.meta.env.VITE_BACKEND_URL}${item.image}`}
                           alt={item.productTitle}
                           className="w-full h-full object-cover"
                         />

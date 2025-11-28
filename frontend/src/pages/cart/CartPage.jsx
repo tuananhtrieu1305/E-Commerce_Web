@@ -86,6 +86,7 @@ export default function CartPage() {
       </div>
     );
   }
+  // console.log(items)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 pb-20">
@@ -222,7 +223,7 @@ export default function CartPage() {
                     <div className="flex-shrink-0">
                       <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 group-hover:scale-105 transition-transform duration-300">
                         <img
-                          src={item.image ? item.image : "https://placehold.co/100x100/e2e8f0/cbd5e0?text=No+Image"}
+                          src={`${import.meta.env.VITE_BACKEND_URL}${item.image}`}
                           alt={`Ảnh sản phẩm ${item.productId}`}
                           className="w-full h-full object-cover"
                         />
